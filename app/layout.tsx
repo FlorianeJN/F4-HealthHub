@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@/components/theme-provider";
 import { frFR } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
 import { type Metadata } from "next";
@@ -19,19 +20,23 @@ export const metadata: Metadata = {
   description:
     "F4 HealthHub est un logiciel de gestion visant à aider les agences de placement à gérer leur personnel, leurs partenaires, leurs factures, et bien plus encore!",
 };
-
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider localization={frFR}>
-      <html lang="fr">
+    <ClerkProvider localization={frFR} afterSignOutUrl="/">
+      <html lang="fr" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          {children}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

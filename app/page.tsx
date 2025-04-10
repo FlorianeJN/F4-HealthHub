@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import LandingHeader from "@/components/ui/landing-header";
 import SignUp from "@/components/ui/sign-up";
-import { ArrowRight, BarChart3, Calendar, Shield, Users } from "lucide-react";
+import { BarChart3, Calendar, Shield, Users } from "lucide-react";
 import Image from "next/image";
 
 export default function LandingPage() {
@@ -22,9 +22,11 @@ export default function LandingPage() {
                 votre rentabilité avec notre plateforme intuitive.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button className="rounded-full px-8 py-6 text-base">
-                  Regarder la démo
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                <Button
+                  variant="secondary"
+                  className="rounded-full pr-6 pl-4 py-6 text-base hover:cursor-pointer"
+                >
+                  Voir la démo
                 </Button>
               </div>
             </div>
@@ -135,7 +137,7 @@ export default function LandingPage() {
       </main>
 
       <footer className="bg-slate-50  py-12 mt-8 pt-8 border-t text-center text-slate-500">
-        <p>© {new Date().getFullYear()} F4-HEALTHCARE. Tous droits réservés.</p>
+        <p>© 2025 F4-HEALTHCARE. Tous droits réservés.</p>
       </footer>
     </div>
   );

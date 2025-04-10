@@ -8,8 +8,13 @@ type SignInProps = {
 
 export default function SignUp({ label, className }: SignInProps) {
   return (
-    <SignUpButton>
-      <Button className={`hover:cursor-pointer ${className}`}>{label}</Button>
+    <SignUpButton mode="redirect" fallbackRedirectUrl="/dashboard">
+      <Button
+        variant="secondary"
+        className={`hover:cursor-pointer ${className}`}
+      >
+        {label}
+      </Button>
     </SignUpButton>
   );
 }
