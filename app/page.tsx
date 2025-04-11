@@ -22,10 +22,7 @@ export default function LandingPage() {
                 votre rentabilité avec notre plateforme intuitive.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button
-                  variant="secondary"
-                  className="rounded-full pr-6 pl-4 py-6 text-base hover:cursor-pointer"
-                >
+                <Button className="rounded-full pr-6 pl-4 py-6 text-base hover:cursor-pointer">
                   Voir la démo
                 </Button>
               </div>
@@ -47,7 +44,7 @@ export default function LandingPage() {
             </div>
             <div className="rounded-xl overflow-hidden shadow-2xl border border-slate-200 max-w-5xl mx-auto">
               <Image
-                src="/lander.PNG"
+                src="/lander.png"
                 alt="Tableau de bord F4-HEALTHCARE"
                 width={1200}
                 height={675}
