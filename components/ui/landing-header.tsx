@@ -29,11 +29,8 @@ export default function LandingHeader() {
             <SignUp label="S'inscrire" />
           </SignedOut>
           <SignedIn>
-            <Link
-              className={buttonVariants({ variant: "outline" })}
-              href="/dashboard"
-            >
-              Go to Dashboard
+            <Link className={buttonVariants({})} href="/dashboard">
+              Accéder à l&apos;application
             </Link>
             <UserButton />
           </SignedIn>
