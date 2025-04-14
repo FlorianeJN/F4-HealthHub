@@ -71,8 +71,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import AddPartnerForm from "./add-partner-form";
+import Modal from "./modal";
 
 // Your updated Search component
 
@@ -165,6 +165,14 @@ export function DataTable<Row extends { id: string | number }>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const openModal = () => {
+    console.log("Opening modal...");
+    setIsModalOpen(true);
+  };
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <Tabs defaultValue="outline" className="w-full flex-col gap-6">
       {/* Column visibility dropdown */}
@@ -203,22 +211,30 @@ export function DataTable<Row extends { id: string | number }>({
           </div>
 
           {/* Add new partner */}
-          <Link href={`${usePathname()}/add`}>
-            <Button
-              variant="outline"
-              className="hidden lg:inline hover:cursor-pointer"
-              size="sm"
-            >
-              <span>+ Ajouter un Partenaire</span>
-            </Button>
-          </Link>
-          <Link href={`${usePathname()}/add`}>
-            <Button variant="outline" className="lg:hidden" size="lg">
-              <span>+ Nouveau</span>
-            </Button>
-          </Link>
+
+          <Button
+            variant="outline"
+            className="hidden lg:inline hover:cursor-pointer"
+            size="sm"
+            onClick={openModal}
+          >
+            <span>+ Ajouter un Partenaire</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="lg:hidden"
+            size="lg"
+            onClick={openModal}
+          >
+            <span>+ Nouveau</span>
+          </Button>
         </div>
       </div>
+
+      {/* Modal for adding a new partner */}
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <AddPartnerForm onClose={closeModal} />
+      </Modal>
 
       {/* Table + pagination */}
       <TabsContent value="outline" className="px-4 lg:px-6">

@@ -36,6 +36,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <div id="modal-root" />
           </ThemeProvider>
         </body>
       </html>
