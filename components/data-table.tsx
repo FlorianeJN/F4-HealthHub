@@ -58,6 +58,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import AddEmployeeForm from "./add-employee-form";
 import AddPartnerForm from "./add-partner-form";
 import Modal from "./modal";
 
@@ -91,11 +92,13 @@ export function PlainRow<RowType extends object>({
 export interface DataTableProps<Row extends { id: string | number }> {
   data: Row[];
   columns: ColumnDef<Row>[];
+  type: "employee" | "partner";
 }
 
 export function DataTable<Row extends { id: string | number }>({
   data,
   columns,
+  type,
 }: DataTableProps<Row>) {
   // Keep track of table data in state
   const [rowSelection, setRowSelection] = React.useState({});
@@ -104,16 +107,17 @@ export function DataTable<Row extends { id: string | number }>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const [sorting, setSorting] = React.useState<SortingState>([
-    { id: "id", desc: false },
-  ]);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
-  // DnD
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  // Initialize sensors for drag and drop
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
-        distance: 5,
+        distance: 10,
       },
     }),
     useSensor(TouchSensor, {
@@ -125,6 +129,7 @@ export function DataTable<Row extends { id: string | number }>({
     useSensor(KeyboardSensor)
   );
 
+  // Initialize the table
   const table = useReactTable({
     data,
     columns,
@@ -146,9 +151,6 @@ export function DataTable<Row extends { id: string | number }>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
 
   return (
     <Tabs defaultValue="outline" className="w-full flex-col gap-6">
@@ -187,15 +189,16 @@ export function DataTable<Row extends { id: string | number }>({
             </DropdownMenu>
           </div>
 
-          {/* Add new partner */}
-
+          {/* Add new button */}
           <Button
             variant="outline"
             className="hidden lg:inline hover:cursor-pointer"
             size="sm"
             onClick={openModal}
           >
-            <span>+ Ajouter un Partenaire</span>
+            <span>
+              + Ajouter un {type === "employee" ? "Employé" : "Partenaire"}
+            </span>
           </Button>
           <Button
             variant="outline"
@@ -208,9 +211,13 @@ export function DataTable<Row extends { id: string | number }>({
         </div>
       </div>
 
-      {/* Modal for adding a new partner */}
+      {/* Modal for adding a new item */}
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <AddPartnerForm onClose={closeModal} />
+        {type === "employee" ? (
+          <AddEmployeeForm onClose={closeModal} />
+        ) : (
+          <AddPartnerForm onClose={closeModal} />
+        )}
       </Modal>
 
       {/* Table + pagination */}
@@ -260,49 +267,43 @@ export function DataTable<Row extends { id: string | number }>({
 
         {/* Pagination */}
         <div className="flex items-center justify-end space-x-2 py-4">
-          <div className="flex items-center space-x-6 lg:space-x-8">
-            <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-              Page {table.getState().pagination.pageIndex + 1} sur{" "}
-              {table.getPageCount()}
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                className="hidden h-8 w-8 p-0 lg:flex"
-                onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
-              >
-                <span className="sr-only">Go to first page</span>
-                <IconChevronsLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                className="h-8 w-8 p-0"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                <span className="sr-only">Go to previous page</span>
-                <IconChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                className="h-8 w-8 p-0"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                <span className="sr-only">Go to next page</span>
-                <IconChevronRight className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                className="hidden h-8 w-8 p-0 lg:flex"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-              >
-                <span className="sr-only">Go to last page</span>
-                <IconChevronsRight className="h-4 w-4" />
-              </Button>
-            </div>
+          <div className="flex-1 text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length} sur{" "}
+            {table.getFilteredRowModel().rows.length} ligne(s) sélectionnée(s).
+          </div>
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <IconChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <IconChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              <IconChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+            >
+              <IconChevronsRight className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </TabsContent>

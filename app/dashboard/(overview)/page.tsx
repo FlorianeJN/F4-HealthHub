@@ -105,7 +105,7 @@ export default function DashboardView() {
           <div className="px-4 lg:px-6">
             <ChartAreaInteractive />
           </div>
-          <DataTable columns={columns} data={data} />
+          <DataTable columns={columns} data={data} type="employee" />
         </div>
       </div>
     </div>

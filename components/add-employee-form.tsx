@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Employee } from "@/lib/definitions";
+import { addEmployee } from "@/lib/actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
@@ -34,25 +34,19 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface EditEmployeeFormProps {
-  employee: Employee;
+interface AddEmployeeFormProps {
   onClose: () => void;
-  onSubmit: (formData: FormData) => Promise<void>;
 }
 
-export default function EditEmployeeForm({
-  employee,
-  onClose,
-  onSubmit,
-}: EditEmployeeFormProps) {
+export default function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nom: employee.nom,
-      prenom: employee.prenom,
-      telephone: String(employee.telephone),
-      email: employee.email,
-      statut: employee.statut,
+      nom: "",
+      prenom: "",
+      telephone: "",
+      email: "",
+      statut: "Actif",
     },
   });
 
@@ -69,7 +63,7 @@ export default function EditEmployeeForm({
     formData.append("statut", data.statut);
 
     startTransition(async () => {
-      await onSubmit(formData);
+      await addEmployee(formData);
       setSuccess(true);
       setTimeout(() => {
         onClose();
@@ -79,7 +73,20 @@ export default function EditEmployeeForm({
 
   return (
     <div className="p-6 space-y-4">
-      <h2 className="text-xl font-semibold">Modifier l&apos;employé</h2>
+      <div className="flex flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
+        <h2 className="text-lg font-semibold text-foreground md:text-2xl">
+          Ajouter un Employé
+        </h2>
+
+        <button
+          onClick={onClose}
+          type="button"
+          className="text-muted-foreground hover:text-foreground text-3xl font-bold leading-none hover:cursor-pointer"
+        >
+          &times;
+        </button>
+      </div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <FormField
@@ -167,15 +174,15 @@ export default function EditEmployeeForm({
               {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Enregistrement...
+                  Ajout en cours...
                 </>
               ) : success ? (
                 <>
                   <Check className="mr-2 h-4 w-4 text-green-500" />
-                  Enregistré!
+                  Ajouté!
                 </>
               ) : (
-                "Enregistrer"
+                "Ajouter"
               )}
             </Button>
           </div>

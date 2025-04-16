@@ -52,7 +52,6 @@ export const partnerColumns: ColumnDef<Partner>[] = [
   },
   {
     id: "actions",
-    header: "Actions",
     cell: ({ row }) => {
       return <PartnerActions partner={row.original} />;
     },
@@ -91,7 +90,6 @@ export const employeeColumns: ColumnDef<Employee>[] = [
   },
   {
     id: "actions",
-    header: "Actions",
     cell: ({ row }) => {
       return <EmployeeActions employee={row.original} />;
     },

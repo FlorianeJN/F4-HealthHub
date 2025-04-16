@@ -21,9 +21,7 @@ export default function Page() {
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">
         <div className="flex flex-col gap-4 py-4 px-4 md:gap-6 md:py-6 lg:px-6">
-          <h1 className="text-2xl font-bold">
-            Vue d&apos;ensemble des Employés
-          </h1>
+          <h1 className="text-2xl font-bold">Gestion des Employés</h1>
           <EmployeesDataTable />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">

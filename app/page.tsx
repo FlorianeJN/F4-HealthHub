@@ -1,4 +1,4 @@
-import LandingHeader from "@/components/ui/landing-header";
+import { LandingHeader } from "@/components/ui/landing-header";
 import SignUp from "@/components/ui/sign-up";
 import { BarChart3, Calendar, Shield, Users } from "lucide-react";
 import Image from "next/image";
@@ -15,9 +15,6 @@ export default function LandingPage() {
             <div className="grid lg:grid-cols-2 gap-6 items-center">
               <div className="text-center lg:text-left">
                 <div className="flex items-center justify-center lg:justify-start gap-3 mb-3">
-                  <div className="bg-[#637CF5] text-white font-bold px-3 py-1.5 rounded-xl text-lg shadow">
-                    F4
-                  </div>
                   <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
                     F4 HealthHub
                   </h1>

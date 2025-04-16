@@ -1,11 +1,13 @@
 import { DataTable } from "@/components/data-table";
-import { Employee } from "@/lib/definitions";
-import { columns } from "@/lib/employee-column-definitions";
+import { employeeColumns } from "@/lib/column-definitions";
+import { fetchEmployees } from "@/lib/data";
 
-interface EmployeesDataTableProps {
-  data: Employee[];
-}
-
-export function EmployeesDataTable({ data }: EmployeesDataTableProps) {
-  return <DataTable columns={columns} data={data} />;
+export default async function EmployeesDataTable() {
+  const data = await fetchEmployees();
+  return (
+    <div>
+      <h1 className="px-6 text-xl font-semibold">Liste des Employés</h1>
+      <DataTable data={data} columns={employeeColumns} type="employee" />
+    </div>
+  );
 }

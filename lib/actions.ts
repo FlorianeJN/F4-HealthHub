@@ -84,3 +84,67 @@ export async function updatePartner(formData: FormData) {
     throw new Error("Database Error");
   }
 }
+
+export async function addEmployee(formData: FormData) {
+  "use server";
+
+  const nom = formData.get("nom") as string;
+  const prenom = formData.get("prenom") as string;
+  const telephone = formData.get("telephone") as string;
+  const email = formData.get("email") as string;
+  const poste = formData.get("poste") as string;
+  const statut = formData.get("statut") as string;
+
+  try {
+    await sql`
+      INSERT INTO employes (nom, prenom, telephone, email, poste, statut)
+      VALUES (${nom}, ${prenom}, ${telephone}, ${email}, ${poste}, ${statut})
+    `;
+    revalidatePath("/dashboard/employees");
+    return { success: true };
+  } catch (e) {
+    console.error("Erreur lors de l'insertion de l'employé :", e);
+    throw new Error("Database Error");
+  }
+}
+
+export async function deleteEmployee(id: number) {
+  "use server";
+
+  try {
+    await sql`DELETE FROM employes WHERE id = ${id}`;
+    revalidatePath("/dashboard/employees");
+    return { success: true };
+  } catch (e) {
+    console.error("Erreur lors de la suppression de l'employé :", e);
+    throw new Error("Database Error");
+  }
+}
+
+export async function updateEmployee(formData: FormData) {
+  "use server";
+
+  const id = formData.get("id") as string;
+  const nom = formData.get("nom") as string;
+  const prenom = formData.get("prenom") as string;
+  const telephone = formData.get("telephone") as string;
+  const email = formData.get("email") as string;
+  const statut = formData.get("statut") as string;
+
+  try {
+    await sql`
+      UPDATE employes 
+      SET nom = ${nom}, 
+          prenom = ${prenom}, 
+          telephone = ${telephone}, 
+          email = ${email}, 
+          statut = ${statut}
+      WHERE id = ${id}
+    `;
+    revalidatePath("/dashboard/employees");
+    return { success: true };
+  } catch (e) {
+    console.error("Erreur lors de la mise à jour de l'employé :", e);
+    throw new Error("Database Error");
+  }
+}

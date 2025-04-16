@@ -1,11 +1,12 @@
-import { Employee } from "@/lib/definitions";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+} from "@/components/ui/dropdown-menu";
+import { deleteEmployee, updateEmployee } from "@/lib/actions";
+import { Employee } from "@/lib/definitions";
 import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 import EditEmployeeForm from "./edit-employee-form";
@@ -23,7 +24,24 @@ export default function EmployeeActions({ employee }: EmployeeActionProps) {
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    console.log("Deleting employee");
+    try {
+      await deleteEmployee(employee.id);
+      setIsDeleteModalOpen(false);
+    } catch (error) {
+      console.error("Erreur lors de la suppression:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleUpdate = async (formData: FormData) => {
+    try {
+      formData.append("id", employee.id.toString());
+      await updateEmployee(formData);
+      setIsEditModalOpen(false);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour:", error);
+    }
   };
 
   return (
@@ -62,6 +80,7 @@ export default function EmployeeActions({ employee }: EmployeeActionProps) {
         <EditEmployeeForm
           employee={employee}
           onClose={() => setIsEditModalOpen(false)}
+          onSubmit={handleUpdate}
         />
       </Modal>
 
