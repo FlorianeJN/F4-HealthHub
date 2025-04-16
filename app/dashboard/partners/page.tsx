@@ -1,4 +1,12 @@
+import MultipleBarChart from "@/components/MultipleBarChart";
 import PartnersDataTable from "@/components/partners-data-table";
+import PieChartLabel from "@/components/pie-chart-label";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "F4 HealthHub - Gestion des Partenaires",
+  description: "Vue d'ensemble des partenaires",
+};
 
 export default function Page() {
   return (
@@ -11,14 +19,20 @@ export default function Page() {
 
           <PartnersDataTable />
 
-          <div>
-            <h2 className="text-xl font-semibold mb-2">Chart 1</h2>
-            {/* Add your chart component here */}
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            <div>
+              <h2 className="text-xl font-semibold mb-2">
+                Répartition par province
+              </h2>
+              <MultipleBarChart />
+            </div>
 
-          <div>
-            <h2 className="text-xl font-semibold mb-2">Chart 2</h2>
-            {/* Add your chart component here */}
+            <div>
+              <h2 className="text-xl font-semibold mb-2">
+                Types de partenaires
+              </h2>
+              <PieChartLabel />
+            </div>
           </div>
         </div>
       </div>

@@ -16,7 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { addPartner } from "@/lib/actions";
+import { updatePartner } from "@/lib/actions";
+import { Partner } from "@/lib/definitions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
@@ -37,22 +38,26 @@ const formSchema = z.object({
   courriel: z.string().email("Adresse courriel invalide."),
 });
 
-type AddPartnerFormProps = {
+type EditPartnerFormProps = {
+  partner: Partner;
   onClose: () => void;
 };
 
-export default function MyForm({ onClose }: AddPartnerFormProps) {
+export default function EditPartnerForm({
+  partner,
+  onClose,
+}: EditPartnerFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nom_partenaire: "",
-      no_civique: "",
-      rue: "",
-      ville: "",
-      province: "",
-      code_postal: "",
-      telephone: "",
-      courriel: "",
+      nom_partenaire: partner.nom,
+      no_civique: partner.numero_civique.toString(),
+      rue: partner.rue,
+      ville: partner.ville,
+      province: partner.province,
+      code_postal: partner.code_postal,
+      telephone: partner.telephone.toString(),
+      courriel: partner.courriel,
     },
   });
 
@@ -61,11 +66,18 @@ export default function MyForm({ onClose }: AddPartnerFormProps) {
 
   async function handleAction(formData: FormData) {
     setSuccess(false);
+    // Add the partner ID to the form data
+    formData.append("id", partner.id.toString());
+
     startTransition(async () => {
-      await addPartner(formData);
+      await updatePartner(formData);
       setSuccess(true);
-      form.reset();
-      onClose();
+      setTimeout(() => {
+        onClose();
+        setTimeout(() => {
+          window.location.reload();
+        }, 200);
+      }, 2000);
     });
   }
 
@@ -78,7 +90,7 @@ export default function MyForm({ onClose }: AddPartnerFormProps) {
         {/* Header */}
         <div className="flex flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
           <h2 className="text-lg font-semibold text-foreground md:text-2xl">
-            Ajouter un Partenaire
+            Modifier un Partenaire
           </h2>
 
           <button

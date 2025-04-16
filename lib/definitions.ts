@@ -24,6 +24,17 @@ export const DummyDataSchema = z.object({
   reviewer: z.string(),
 });
 
+export const EmployeeSchema = z.object({
+  id: z.number(),
+  nom: z.string(),
+  prenom: z.string(),
+  telephone: z.number(),
+  email: z.string().email(),
+  statut: z.string(),
+});
+
+export type Employee = z.infer<typeof EmployeeSchema>;
+
 export type DummyData = z.infer<typeof DummyDataSchema>;
 
 export const schema = z.object({

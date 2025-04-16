@@ -1,3 +1,6 @@
+import MultipleBarChart from "@/components/MultipleBarChart";
+import PieChartLabel from "@/components/pie-chart-label";
+import EmployeesDataTable from "@/components/ui/employees-data-table";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,7 +16,33 @@ export const metadata: Metadata = {
   ],
 };
 
-export default async function Page() {
-  await new Promise((r) => setTimeout(r, 2000)); //
-  return <h1>EMPLOYEES</h1>;
+export default function Page() {
+  return (
+    <div className="flex flex-1 flex-col">
+      <div className="@container/main flex flex-1 flex-col gap-2">
+        <div className="flex flex-col gap-4 py-4 px-4 md:gap-6 md:py-6 lg:px-6">
+          <h1 className="text-2xl font-bold">
+            Vue d&apos;ensemble des Employés
+          </h1>
+          <EmployeesDataTable />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            <div>
+              <h2 className="text-xl font-semibold mb-2">
+                Répartition par province
+              </h2>
+              <MultipleBarChart />
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold mb-2">
+                Types de partenaires
+              </h2>
+              <PieChartLabel />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
