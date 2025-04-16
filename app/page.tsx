@@ -5,13 +5,16 @@ import Image from "next/image";
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <LandingHeader />
 
       <main className="flex-1">
         {/* Hero Section with Dashboard Preview */}
-        <section className="relative pt-8 sm:pt-12 pb-12 sm:pb-16 overflow-hidden bg-white">
-          <div className="container mx-auto px-4">
+        <section className="relative pt-8 sm:pt-12 pb-12 sm:pb-16 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-white to-slate-50/50"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,124,245,0.15),transparent_50%)]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(57,108,255,0.1),transparent_50%)]"></div>
+          <div className="container mx-auto px-4 relative">
             <div className="grid lg:grid-cols-2 gap-6 items-center">
               <div className="text-center lg:text-left">
                 <div className="flex items-center justify-center lg:justify-start gap-3 mb-3">
@@ -112,7 +115,7 @@ export default function LandingPage() {
 
                 <div className="flex justify-center lg:justify-start">
                   <SignUp
-                    className="bg-[#396CFF] hover:bg-[#2F5FE0] text-white rounded-full px-6 py-3 text-base font-medium shadow hover:shadow-lg transition-all duration-300"
+                    className="bg-[#396CFF] hover:bg-[#2F5FE0] text-white rounded-full px-6 py-3 text-base font-medium shadow-lg hover:shadow-xl transition-all duration-300"
                     label="Commencer maintenant"
                   />
                 </div>
@@ -122,10 +125,10 @@ export default function LandingPage() {
                 </p>
               </div>
               <div className="relative mt-6 lg:mt-0">
-                <div className="relative rounded-xl overflow-hidden shadow-xl border border-slate-200">
+                <div className="relative rounded-xl overflow-hidden shadow-2xl border border-slate-200 bg-white">
                   <div className="absolute -inset-4 bg-gradient-to-r from-[#637CF5] to-[#396CFF] rounded-2xl opacity-10 blur-xl -z-10"></div>
                   <Image
-                    src="/illustration.png" // Mets ici le chemin vers l'image générée
+                    src="/illustration.png"
                     alt="Illustration F4 HealthHub"
                     width={800}
                     height={500}
@@ -165,8 +168,9 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-12 sm:py-16 bg-slate-50">
-          <div className="container mx-auto px-4">
+        <section className="py-12 sm:py-16 bg-white relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-50/50 to-white"></div>
+          <div className="container mx-auto px-4 relative">
             <div className="text-center mb-10 sm:mb-12">
               <span className="inline-block px-4 py-1.5 text-sm font-semibold text-indigo-600 bg-indigo-50 rounded-full mb-3">
                 Fonctionnalités
@@ -233,11 +237,12 @@ export default function LandingPage() {
         </section>
 
         {/* Dashboard Showcase */}
-        <section className="py-12 sm:py-16 bg-white">
-          <div className="container mx-auto px-4">
+        <section className="py-12 sm:py-16 bg-slate-50 relative">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(99,124,245,0.1),transparent_50%)]"></div>
+          <div className="container mx-auto px-4 relative">
             <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center">
               <div className="order-2 lg:order-1">
-                <div className="relative rounded-xl overflow-hidden shadow-2xl border border-slate-200">
+                <div className="relative rounded-xl overflow-hidden shadow-2xl border border-slate-200 bg-white">
                   <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl opacity-20 blur-xl -z-10"></div>
                   <Image
                     src="/lander.png"
@@ -330,6 +335,7 @@ export default function LandingPage() {
         {/* CTA */}
         <section className="py-12 sm:py-16 bg-gradient-to-br from-[#637CF5] to-[#396CFF] text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1),transparent_70%)]"></div>
           <div className="container mx-auto px-4 text-center relative z-10">
             <h2 className="text-3xl sm:text-4xl font-bold mb-3 sm:mb-4 tracking-tight">
               Prêt à transformer votre agence de placement?
@@ -348,8 +354,8 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="bg-slate-50 py-6 sm:py-8 mt-6 pt-6 border-t text-center text-slate-500">
-        <p>© 2025 F4-HEALTHCARE. Tous droits réservés.</p>
+      <footer className="bg-white py-6 sm:py-8 mt-6 pt-6 border-t text-center text-slate-500">
+        <p>© 2025 F4 HealthHub. Tous droits réservés.</p>
       </footer>
     </div>
   );
