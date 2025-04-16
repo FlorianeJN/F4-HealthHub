@@ -12,17 +12,19 @@ export function LandingHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container flex h-14 items-center">
-        <div className="mr-4 flex">
+        <div className="mr-4 px-52 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold">F4 HealthHub</span>
+            <span className="font-bold text-xl text-slate-900">
+              F4 HealthHub
+            </span>
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
           {isSignedIn ? (
             <Link href="/dashboard">
-              <button className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+              <button className="inline-flex items-center justify-center rounded-md bg-[#396CFF] px-4 py-2 text-sm font-medium text-white hover:bg-[#2F5FE0]">
                 Accéder à l&apos;application
               </button>
             </Link>
@@ -30,11 +32,11 @@ export function LandingHeader() {
             <>
               <SignIn
                 label="Connexion"
-                className="bg-white text-primary border border-primary hover:bg-primary/10"
+                className="bg-white text-[#396CFF] border border-[#396CFF] hover:bg-[#396CFF]/10"
               />
               <SignUp
                 label="Inscription"
-                className="bg-primary text-white hover:bg-primary/90"
+                className="bg-[#396CFF] text-white hover:bg-[#2F5FE0]"
               />
             </>
           )}
