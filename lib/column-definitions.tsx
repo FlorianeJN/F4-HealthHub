@@ -3,7 +3,7 @@
 import EmployeeActions from "@/components/employees-actions";
 import { PartnerActions } from "@/components/partner-actions";
 import { ColumnDef } from "@tanstack/react-table";
-import { Employee, Partner } from "./definitions";
+import { Employee, Invoice, Partner } from "./definitions";
 
 export const partnerColumns: ColumnDef<Partner>[] = [
   {
@@ -92,6 +92,46 @@ export const employeeColumns: ColumnDef<Employee>[] = [
     id: "actions",
     cell: ({ row }) => {
       return <EmployeeActions employee={row.original} />;
+    },
+  },
+];
+
+export const invoiceColumns: ColumnDef<Invoice>[] = [
+  {
+    accessorKey: "num_facture",
+    header: "Numéro de facture",
+  },
+  {
+    accessorKey: "nom_partenaire",
+    header: "Partenaire",
+  },
+  {
+    accessorKey: "date",
+    header: "Date",
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("date"));
+      return date.toLocaleDateString("fr-FR", {
+        month: "long",
+        year: "numeric",
+      });
+    },
+  },
+  {
+    accessorKey: "montant_apres_taxes",
+    header: "Montant total",
+    cell: ({ row }) => {
+      return `${row.getValue("montant_apres_taxes")} $`;
+    },
+  },
+  {
+    accessorKey: "statut",
+    header: "Statut",
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: () => {
+      return <button className="text-blue-600 hover:underline">Voir</button>;
     },
   },
 ];

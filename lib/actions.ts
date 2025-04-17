@@ -133,7 +133,7 @@ export async function updateEmployee(formData: FormData) {
 
   try {
     await sql`
-      UPDATE employes 
+      UPDATE employe 
       SET nom = ${nom}, 
           prenom = ${prenom}, 
           telephone = ${telephone}, 

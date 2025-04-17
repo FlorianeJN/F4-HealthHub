@@ -35,6 +35,16 @@ export const EmployeeSchema = z.object({
 
 export type Employee = z.infer<typeof EmployeeSchema>;
 
+export const InvoiceSchema = z.object({
+  num_facture: z.string(),
+  nom_partenaire: z.string(),
+  date: z.string(),
+  montant_apres_taxes: z.string(),
+  statut: z.string(),
+});
+
+export type Invoice = z.infer<typeof InvoiceSchema>;
+
 export type DummyData = z.infer<typeof DummyDataSchema>;
 
 export const schema = z.object({

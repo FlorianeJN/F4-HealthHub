@@ -7,7 +7,6 @@ export default async function PartnersDataTable() {
   const data = await fetchPartners();
   return (
     <div>
-      <h1 className="px-6 text-xl font-semibold">Liste des Partenaires</h1>
       <DataTable columns={partnerColumns} data={data} type="partner" />
     </div>
   );
