@@ -36,6 +36,7 @@ export function AddressInput({ className }: AddressInputProps) {
           <Label htmlFor="no-civique">Numéro civique</Label>
           <Input
             id="no-civique"
+            name="address_number"
             placeholder="Numéro civique"
             className="bg-background"
           />
@@ -44,17 +45,23 @@ export function AddressInput({ className }: AddressInputProps) {
           <Label htmlFor="rue">Rue</Label>
           <Input
             id="rue"
+            name="address_street"
             placeholder="Nom de la rue"
             className="bg-background"
           />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="ville">Ville</Label>
-          <Input id="ville" placeholder="Ville" className="bg-background" />
+          <Input
+            id="ville"
+            name="address_city"
+            placeholder="Ville"
+            className="bg-background"
+          />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="province">Province</Label>
-          <Select>
+          <Select name="address_province">
             <SelectTrigger className="bg-background">
               <SelectValue placeholder="Sélectionnez une province" />
             </SelectTrigger>
@@ -71,6 +78,7 @@ export function AddressInput({ className }: AddressInputProps) {
           <Label htmlFor="code-postal">Code postal</Label>
           <Input
             id="code-postal"
+            name="address_postal_code"
             placeholder="Code postal"
             className="bg-background"
           />

@@ -97,7 +97,7 @@ export async function addEmployee(formData: FormData) {
 
   try {
     await sql`
-      INSERT INTO employes (nom, prenom, telephone, email, poste, statut)
+      INSERT INTO employe (nom, prenom, telephone, email, poste, statut)
       VALUES (${nom}, ${prenom}, ${telephone}, ${email}, ${poste}, ${statut})
     `;
     revalidatePath("/dashboard/employees");
@@ -112,7 +112,7 @@ export async function deleteEmployee(id: number) {
   "use server";
 
   try {
-    await sql`DELETE FROM employes WHERE id = ${id}`;
+    await sql`DELETE FROM employe WHERE id = ${id}`;
     revalidatePath("/dashboard/employees");
     return { success: true };
   } catch (e) {
@@ -147,4 +147,45 @@ export async function updateEmployee(formData: FormData) {
     console.error("Erreur lors de la mise à jour de l'employé :", e);
     throw new Error("Database Error");
   }
+}
+
+export async function saveEnterpriseInfo(formData: FormData) {
+  "use server";
+
+  // Récupérer les données du formulaire
+  const company = formData.get("company");
+  const neq = formData.get("neq");
+  const tps = formData.get("tps");
+  const tvq = formData.get("tvq");
+  const phone = formData.get("phone");
+  const email = formData.get("email");
+  const website = formData.get("website");
+
+  // Récupérer les données d'adresse
+  const address_number = formData.get("address_number");
+  const address_street = formData.get("address_street");
+  const address_city = formData.get("address_city");
+  const address_province = formData.get("address_province");
+  const address_postal_code = formData.get("address_postal_code");
+
+  // Ici, vous pouvez ajouter la logique pour sauvegarder les informations
+  console.log("Sauvegarde des informations:", {
+    company,
+    neq,
+    tps,
+    tvq,
+    phone,
+    email,
+    website,
+    address: {
+      number: address_number,
+      street: address_street,
+      city: address_city,
+      province: address_province,
+      postal_code: address_postal_code,
+    },
+  });
+
+  // Pour l'instant, nous allons simplement simuler un délai
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 }
