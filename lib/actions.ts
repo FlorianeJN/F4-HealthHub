@@ -153,39 +153,119 @@ export async function saveEnterpriseInfo(formData: FormData) {
   "use server";
 
   // Récupérer les données du formulaire
-  const company = formData.get("company");
-  const neq = formData.get("neq");
-  const tps = formData.get("tps");
-  const tvq = formData.get("tvq");
-  const phone = formData.get("phone");
-  const email = formData.get("email");
-  const website = formData.get("website");
+  const company = formData.get("company") as string;
+  const neq = formData.get("neq") as string;
+  const tps = formData.get("tps") as string;
+  const tvq = formData.get("tvq") as string;
+  const phone = formData.get("phone") as string;
+  const email = formData.get("email") as string;
+  const website = formData.get("website") as string;
 
   // Récupérer les données d'adresse
-  const address_number = formData.get("address_number");
-  const address_street = formData.get("address_street");
-  const address_city = formData.get("address_city");
-  const address_province = formData.get("address_province");
-  const address_postal_code = formData.get("address_postal_code");
+  const address_number = formData.get("address_number") as string;
+  const address_street = formData.get("address_street") as string;
+  const address_city = formData.get("address_city") as string;
+  const address_province = formData.get("address_province") as string;
+  const address_postal_code = formData.get("address_postal_code") as string;
 
-  // Ici, vous pouvez ajouter la logique pour sauvegarder les informations
-  console.log("Sauvegarde des informations:", {
-    company,
-    neq,
-    tps,
-    tvq,
-    phone,
-    email,
-    website,
-    address: {
-      number: address_number,
-      street: address_street,
-      city: address_city,
-      province: address_province,
-      postal_code: address_postal_code,
-    },
-  });
+  try {
+    // Vérifier si une entreprise existe déjà
+    const existingEnterprise = await sql`
+      SELECT id FROM entreprise LIMIT 1
+    `;
 
-  // Pour l'instant, nous allons simplement simuler un délai
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+    let enterpriseId;
+
+    if (existingEnterprise.length > 0) {
+      // Mettre à jour l'entreprise existante
+      enterpriseId = existingEnterprise[0].id;
+      await sql`
+        UPDATE entreprise 
+        SET nom = ${company}, 
+            neq = ${neq}, 
+            tps = ${tps}, 
+            tvq = ${tvq}, 
+            telephone = ${phone}, 
+            email = ${email}, 
+            website = ${website}
+        WHERE id = ${enterpriseId}
+      `;
+
+      // Vérifier si une adresse existe déjà pour cette entreprise
+      const existingAddress = await sql`
+        SELECT id FROM adresse WHERE link = ${enterpriseId}
+      `;
+
+      if (existingAddress.length > 0) {
+        // Mettre à jour l'adresse existante
+        await sql`
+          UPDATE adresse 
+          SET no_civique = ${address_number}, 
+              rue = ${address_street}, 
+              ville = ${address_city}, 
+              province = ${address_province}, 
+              code_postal = ${address_postal_code}
+          WHERE link = ${enterpriseId}
+        `;
+      } else {
+        // Créer une nouvelle adresse
+        await sql`
+          INSERT INTO adresse (no_civique, rue, ville, province, code_postal, link)
+          VALUES (${address_number}, ${address_street}, ${address_city}, ${address_province}, ${address_postal_code}, ${enterpriseId})
+        `;
+      }
+    } else {
+      // Créer une nouvelle entreprise
+      const result = await sql`
+        INSERT INTO entreprise (nom, neq, tps, tvq, telephone, email, website)
+        VALUES (${company}, ${neq}, ${tps}, ${tvq}, ${phone}, ${email}, ${website})
+        RETURNING id
+      `;
+
+      enterpriseId = result[0].id;
+
+      // Créer une nouvelle adresse
+      await sql`
+        INSERT INTO adresse (no_civique, rue, ville, province, code_postal, link)
+        VALUES (${address_number}, ${address_street}, ${address_city}, ${address_province}, ${address_postal_code}, ${enterpriseId})
+      `;
+    }
+
+    console.log(
+      "Informations de l'entreprise et de l'adresse sauvegardées avec succès"
+    );
+    revalidatePath("/dashboard/profile");
+  } catch (e) {
+    console.error("Erreur lors de la sauvegarde des informations:", e);
+    throw new Error("Erreur de base de données");
+  }
+}
+
+export async function getEnterpriseInfo() {
+  "use server";
+
+  try {
+    // Récupérer les informations de l'entreprise
+    const enterpriseResult = await sql`
+      SELECT * FROM entreprise LIMIT 1
+    `;
+
+    if (enterpriseResult.length === 0) {
+      return { enterprise: null, address: null };
+    }
+
+    const enterprise = enterpriseResult[0];
+
+    // Récupérer l'adresse associée à l'entreprise
+    const addressResult = await sql`
+      SELECT * FROM adresse WHERE link = ${enterprise.id}
+    `;
+
+    const address = addressResult.length > 0 ? addressResult[0] : null;
+
+    return { enterprise, address };
+  } catch (e) {
+    console.error("Erreur lors de la récupération des informations:", e);
+    throw new Error("Erreur de base de données");
+  }
 }

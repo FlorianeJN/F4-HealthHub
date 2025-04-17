@@ -10,6 +10,13 @@ import {
 
 interface AddressInputProps {
   className?: string;
+  defaultAddress?: {
+    number: string;
+    street: string;
+    city: string;
+    province: string;
+    postal_code: string;
+  };
 }
 
 const PROVINCES = [
@@ -28,7 +35,7 @@ const PROVINCES = [
   { code: "YT", name: "Yukon" },
 ];
 
-export function AddressInput({ className }: AddressInputProps) {
+export function AddressInput({ className, defaultAddress }: AddressInputProps) {
   return (
     <div className={`space-y-4 ${className}`}>
       <div className="grid gap-4 md:grid-cols-2">
@@ -39,6 +46,7 @@ export function AddressInput({ className }: AddressInputProps) {
             name="address_number"
             placeholder="Numéro civique"
             className="bg-background"
+            defaultValue={defaultAddress?.number || ""}
           />
         </div>
         <div className="grid gap-2">
@@ -48,6 +56,7 @@ export function AddressInput({ className }: AddressInputProps) {
             name="address_street"
             placeholder="Nom de la rue"
             className="bg-background"
+            defaultValue={defaultAddress?.street || ""}
           />
         </div>
         <div className="grid gap-2">
@@ -57,11 +66,15 @@ export function AddressInput({ className }: AddressInputProps) {
             name="address_city"
             placeholder="Ville"
             className="bg-background"
+            defaultValue={defaultAddress?.city || ""}
           />
         </div>
         <div className="grid gap-2">
           <Label htmlFor="province">Province</Label>
-          <Select name="address_province">
+          <Select
+            name="address_province"
+            defaultValue={defaultAddress?.province || ""}
+          >
             <SelectTrigger className="bg-background">
               <SelectValue placeholder="Sélectionnez une province" />
             </SelectTrigger>
@@ -81,6 +94,7 @@ export function AddressInput({ className }: AddressInputProps) {
             name="address_postal_code"
             placeholder="Code postal"
             className="bg-background"
+            defaultValue={defaultAddress?.postal_code || ""}
           />
         </div>
       </div>
