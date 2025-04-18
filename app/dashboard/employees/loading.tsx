@@ -1,21 +1,20 @@
-import Spinner from "@/components/ui/spinner";
+import { EmployeeStatsSkeleton } from "@/components/skeletons/employee-stats-skeleton";
+import { EmployeeTableSkeleton } from "@/components/skeletons/employee-table-skeleton";
 
-export default function LoadingPage() {
+export default function Loading() {
   return (
-    <div
-      className="
-          fixed inset-0 
-          flex flex-col items-center justify-center 
-          bg-opacity-75 
-          backdrop-blur-sm 
-          animate-fade-in
-          p-4
-        "
-    >
-      <h1 className="mb-4 text-2xl font-semibold text-gray-700">
-        Loading employees...
-      </h1>
-      <Spinner />
+    <div className="flex flex-col gap-8 p-8">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Gestion des Employés
+        </h1>
+        <p className="text-muted-foreground">
+          Gérez vos employés et leurs affectations
+        </p>
+      </div>
+
+      <EmployeeStatsSkeleton />
+      <EmployeeTableSkeleton />
     </div>
   );
 }

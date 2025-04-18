@@ -1,7 +1,7 @@
 "use server";
 
 import postgres from "postgres";
-import { Employee, Invoice, Partner } from "./definitions";
+import { Employee, Invoice, Partner, Shift } from "./definitions";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
@@ -34,5 +34,17 @@ export async function fetchInvoices() {
   } catch (e) {
     console.log(e);
     throw new Error("Database Error Fetching Invoices");
+  }
+}
+
+export async function fetchInvoice(num_facture: string) {
+  try {
+    const data = await sql<
+      Shift[]
+    >`SELECT * FROM quart WHERE num_facture = ${num_facture}`;
+    return data;
+  } catch (e) {
+    console.log(e);
+    throw new Error("Database Error Fetching Invoice");
   }
 }

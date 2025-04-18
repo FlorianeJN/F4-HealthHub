@@ -9,7 +9,8 @@ export const metadata: Metadata = {
   description: "Gérez vos partenaires et leurs informations",
 };
 
-export default function Page() {
+export default async function Page() {
+  await new Promise((resolve) => setTimeout(resolve, 3000));
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">

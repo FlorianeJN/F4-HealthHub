@@ -9,7 +9,7 @@ import { InvoiceDataTable } from "./invoice-data-table";
 
 const columns: ColumnDef<Invoice>[] = [
   {
-    accessorKey: "numero_facture",
+    accessorKey: "num_facture",
     header: "Numéro",
   },
   {
@@ -17,15 +17,23 @@ const columns: ColumnDef<Invoice>[] = [
     header: "Partenaire",
   },
   {
-    accessorKey: "date_emission",
-    header: "Date d'émission",
-    cell: ({ row }) => row.getValue("date_emission"),
+    accessorKey: "date",
+    header: "Date",
+    cell: ({ row }) => {
+      const invoiceNumber = row.original.num_facture;
+      const [, month, year] = invoiceNumber.split("-");
+      const date = new Date(parseInt(year), parseInt(month) - 1);
+      return date.toLocaleDateString("fr-FR", {
+        month: "long",
+        year: "numeric",
+      });
+    },
   },
   {
-    accessorKey: "montant_total",
+    accessorKey: "montant_apres_taxes",
     header: "Montant",
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("montant_total"));
+      const amount = parseFloat(row.getValue("montant_apres_taxes"));
       return new Intl.NumberFormat("fr-CA", {
         style: "currency",
         currency: "CAD",
@@ -39,12 +47,17 @@ const columns: ColumnDef<Invoice>[] = [
       const status = row.getValue("statut") as string;
       return (
         <Badge
-          variant={
-            status === "payée"
-              ? "default"
-              : status === "en attente"
-              ? "secondary"
-              : "destructive"
+          variant="default"
+          className={
+            status === "Payée"
+              ? "bg-green-600 hover:bg-green-700"
+              : status === "Envoyée"
+              ? "bg-indigo-600 hover:bg-indigo-700"
+              : status === "Prête"
+              ? "bg-blue-500 hover:bg-blue-600"
+              : status === "À compléter"
+              ? "bg-red-500 hover:bg-red-600"
+              : "bg-gray-500 hover:bg-gray-600"
           }
         >
           {status}

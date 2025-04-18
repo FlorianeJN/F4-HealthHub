@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { redirect, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export function NavMain({
   items,
@@ -21,9 +21,10 @@ export function NavMain({
   }[];
 }) {
   const pathName = usePathname();
+  const router = useRouter();
 
-  function handleClick(item: { title: string; url: string; icon?: Icon }) {
-    redirect(item.url);
+  function handleClick(url: string) {
+    router.push(url);
   }
 
   return (
@@ -36,7 +37,7 @@ export function NavMain({
                 isActive={pathName === item.url}
                 className="hover:cursor-pointer"
                 tooltip={item.title}
-                onClick={() => handleClick(item)}
+                onClick={() => handleClick(item.url)}
               >
                 {item.icon && <item.icon />}
                 <span className="text-base">{item.title}</span>

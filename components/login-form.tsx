@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { SignIn } from "@clerk/nextjs";
 import Image from "next/image";
+import Link from "next/link";
 
 export function LoginForm({
   className,
@@ -44,8 +45,8 @@ export function LoginForm({
 
       <p className="text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
         En cliquant sur Continuer, vous acceptez{" "}
-        <a href="">nos Conditions d&apos;utilisation</a> et notre{" "}
-        <a href="">Politique de confidentialité.</a>
+        <Link href="/terms">nos Conditions d&apos;utilisation</Link> et notre{" "}
+        <Link href="/privacy">Politique de confidentialité.</Link>
       </p>
     </div>
   );

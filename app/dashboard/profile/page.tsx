@@ -8,6 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
+  await new Promise((resolve) => setTimeout(resolve, 3000));
   // Récupérer les données de l'entreprise
   const { enterprise, address } = await getEnterpriseInfo();
 

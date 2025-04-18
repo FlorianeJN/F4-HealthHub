@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Invoice } from "@/lib/definitions";
 import {
   IconChevronLeft,
   IconChevronRight,
@@ -21,17 +22,18 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { useRouter } from "next/navigation";
 
 interface InvoiceDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function InvoiceDataTable<TData, TValue>({
+export function InvoiceDataTable<TData extends Invoice, TValue>({
   columns,
   data = [],
 }: InvoiceDataTableProps<TData, TValue>) {
-  console.log(data);
+  const router = useRouter();
   const table = useReactTable({
     data,
     columns,
@@ -90,7 +92,12 @@ export function InvoiceDataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="hover:bg-muted/50"
+                  className="hover:bg-muted/50 cursor-pointer"
+                  onClick={() => {
+                    router.push(
+                      `/dashboard/invoices/${row.original.num_facture}`
+                    );
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="py-4 text-base">

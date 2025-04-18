@@ -31,6 +31,11 @@ const data = {
       icon: IconDashboard,
     },
     {
+      title: "Factures",
+      url: "/dashboard/invoices",
+      icon: IconFileInvoice,
+    },
+    {
       title: "Partenaires",
       url: "/dashboard/partners",
       icon: IconBriefcase,
@@ -40,11 +45,7 @@ const data = {
       url: "/dashboard/employees",
       icon: IconUsers,
     },
-    {
-      title: "Factures",
-      url: "/dashboard/invoices",
-      icon: IconFileInvoice,
-    },
+
     {
       title: "Profil de l'entreprise",
       url: "/dashboard/profile",

@@ -1,5 +1,5 @@
-import { InvoiceStats } from "@/components/invoice-stats";
 import { InvoiceTable } from "@/components/invoice-table";
+import { InvoicesStats } from "@/components/invoices-stats";
 import { fetchInvoices } from "@/lib/data";
 import { Metadata } from "next";
 
@@ -9,6 +9,8 @@ export const metadata: Metadata = {
 };
 
 export default async function InvoicesPage() {
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+
   const data = await fetchInvoices();
 
   return (
@@ -24,7 +26,7 @@ export default async function InvoicesPage() {
             </div>
           </div>
 
-          <InvoiceStats />
+          <InvoicesStats />
           <InvoiceTable invoices={data} />
         </div>
       </div>

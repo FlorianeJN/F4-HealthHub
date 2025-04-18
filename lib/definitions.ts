@@ -45,6 +45,23 @@ export const InvoiceSchema = z.object({
 
 export type Invoice = z.infer<typeof InvoiceSchema>;
 
+export const ShiftSchema = z.object({
+  id: z.number(),
+  num_facture: z.string(),
+  date_quart: z.string(),
+  debut_quart: z.string(),
+  fin_quart: z.string(),
+  pause: z.string(),
+  temps_total: z.string(),
+  prestation: z.string(),
+  taux_horaire: z.string(),
+  montant_total: z.string(),
+  temps_double: z.boolean(),
+  temps_demi: z.boolean(),
+});
+
+export type Shift = z.infer<typeof ShiftSchema>;
+
 export type DummyData = z.infer<typeof DummyDataSchema>;
 
 export const schema = z.object({
