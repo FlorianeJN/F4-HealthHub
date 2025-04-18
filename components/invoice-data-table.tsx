@@ -49,7 +49,10 @@ export function InvoiceDataTable<TData extends Invoice, TValue>({
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button className="gap-2">
+        <Button
+          className="gap-2 hover:cursor-pointer"
+          onClick={() => router.push("/dashboard/invoices/new")}
+        >
           <IconPlus className="h-4 w-4" />
           Créer une nouvelle facture
         </Button>
