@@ -197,3 +197,117 @@ export async function fetchTotalPendingAmounts() {
     throw new Error("Error fetching total pending amounts");
   }
 }
+
+export async function fetchInvoiceAmounts(num_facture: string) {
+  try {
+    const data = await sql<
+      {
+        montant_avant_taxes: number;
+        montant_apres_taxes: number;
+        tps: number;
+        tvq: number;
+      }[]
+    >` 
+    SELECT 
+      montant_avant_taxes,
+      montant_apres_taxes ,
+      tps,
+      tvq
+    FROM facture 
+    WHERE num_facture = ${num_facture} 
+  `;
+
+    const row = data[0];
+
+    return {
+      montant_avant_taxes: formatter.format(row.montant_avant_taxes ?? 0),
+      tps: formatter.format(row.tps ?? 0),
+      tvq: formatter.format(row.tvq ?? 0),
+      montant_apres_taxes: formatter.format(row.montant_apres_taxes ?? 0),
+    };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error fetching invoice amounts");
+  }
+}
+
+export async function fetchNumberOfShifts(num_facture: string) {
+  try {
+    // Nombre total de quarts
+    const totalResult = await sql<{ count: string }[]>`
+      SELECT COUNT(*) AS count
+      FROM quart
+      WHERE num_facture = ${num_facture}
+    `;
+
+    // Nombre de quarts par prestation
+    const byPrestationResult = await sql<
+      { prestation: string; count: string }[]
+    >`
+      SELECT prestation, COUNT(*) AS count
+      FROM quart
+      WHERE num_facture = ${num_facture}
+      GROUP BY prestation
+    `;
+
+    return {
+      total: totalResult[0]?.count ?? 0,
+      byPrestation: byPrestationResult,
+    };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error fetching number of shifts");
+  }
+}
+
+export async function fetchTotalHours(num_facture: string) {
+  try {
+    const totalResult = await sql<{ total_minutes: number | null }[]>`
+      SELECT SUM(
+        EXTRACT(HOUR FROM temps_total::time) * 60 +
+        EXTRACT(MINUTE FROM temps_total::time)
+      ) AS total_minutes
+      FROM quart
+      WHERE num_facture = ${num_facture}
+    `;
+
+    const totalMinutes = totalResult[0]?.total_minutes ?? 0;
+    const totalHours = (totalMinutes / 60).toFixed(2);
+
+    // Par prestation
+    const byPrestationResult = await sql<
+      { prestation: string; total_minutes: number | null }[]
+    >`
+      SELECT prestation,
+        SUM(EXTRACT(HOUR FROM temps_total::time) * 60 + EXTRACT(MINUTE FROM temps_total::time)) AS total_minutes
+      FROM quart
+      WHERE num_facture = ${num_facture}
+      GROUP BY prestation
+    `;
+
+    const byPrestation = byPrestationResult.map((row) => ({
+      prestation: row.prestation,
+      total: ((row.total_minutes ?? 0) / 60).toFixed(2), // Format "2.25" heures
+    }));
+
+    return {
+      total: totalHours,
+      byPrestation,
+    };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error fetching total hours");
+  }
+}
+
+export async function fetchStatus(num_facture: string) {
+  try {
+    const data = await sql<{ statut: string }[]>`
+      SELECT statut FROM facture WHERE num_facture = ${num_facture}
+    `;
+    return data[0]?.statut;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error fetching status");
+  }
+}

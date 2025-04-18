@@ -1,46 +1,100 @@
+import {
+  fetchInvoiceAmounts,
+  fetchNumberOfShifts,
+  fetchTotalHours,
+} from "@/lib/data";
 import Tuile from "./custom/tuile";
 
-export function InvoiceStats() {
+export async function InvoiceStats({ num_facture }: { num_facture: string }) {
+  const { montant_apres_taxes, montant_avant_taxes, tvq, tps } =
+    await fetchInvoiceAmounts(num_facture);
+
+  const { total: totalQuarts, byPrestation } = await fetchNumberOfShifts(
+    num_facture
+  );
+
+  const { total: totalHours, byPrestation: byPrestationHours } =
+    await fetchTotalHours(num_facture);
+
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:grid-cols-2 @xl/main:grid-cols-4">
       <Tuile
         title="Montant total de la facture"
-        value="0,00 $"
+        value={montant_apres_taxes}
         code={
           <>
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Montant avant taxes : 0,00 $
+              Montant avant taxes : {montant_avant_taxes}
             </div>
-            <div className="text-muted-foreground">TPS : 0,00 $</div>
-            <div className="text-muted-foreground">TVQ : 0,00 $</div>
+            <div className="text-muted-foreground">TPS : {tps}</div>
+            <div className="text-muted-foreground">TVQ : {tvq}</div>
           </>
         }
       />
 
       <Tuile
         title="Nombre total de quarts"
-        value="124"
+        value={totalQuarts}
         code={
           <>
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Soins infirmiers: 2
+              Soins infirmiers:{" "}
+              {byPrestation.find((p) => p.prestation === "SOINS INFIRMIERS")
+                ?.count ?? 0}
             </div>
-            <div className="text-muted-foreground"> INF AUX : 2</div>
-            <div className="text-muted-foreground"> PAB: 2</div>
+            <div className="text-muted-foreground">
+              Inf Clinicien(ne):{" "}
+              {byPrestation.find((p) => p.prestation === "INF CLINICIEN(NE)")
+                ?.count ?? 0}
+            </div>
+            <div className="text-muted-foreground">
+              {" "}
+              INF AUX :{" "}
+              {byPrestation.find((p) => p.prestation === "INF AUXILIAIRE")
+                ?.count ?? 0}
+            </div>
+            <div className="text-muted-foreground">
+              {" "}
+              PAB:{" "}
+              {byPrestation.find((p) => p.prestation === "PAB")?.count ?? 0}
+            </div>
           </>
         }
       />
 
       <Tuile
         title="Nombre total d'heures"
-        value="0"
+        value={totalHours + " h"}
         code={
           <>
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Soins infirmiers: 2h
+              Soins infirmiers:{" "}
+              {byPrestationHours.find(
+                (p) => p.prestation === "SOINS INFIRMIERS"
+              )?.total ?? 0}{" "}
+              h
             </div>
-            <div className="text-muted-foreground"> INF AUX : 2h</div>
-            <div className="text-muted-foreground"> PAB: 2h</div>
+            <div className="text-muted-foreground">
+              Inf Clinicien(ne):{" "}
+              {byPrestationHours.find(
+                (p) => p.prestation === "INF CLINICIEN(NE)"
+              )?.total ?? 0}{" "}
+              h
+            </div>
+            <div className="text-muted-foreground">
+              {" "}
+              INF AUX :{" "}
+              {byPrestationHours.find((p) => p.prestation === "INF AUXILIAIRE")
+                ?.total ?? 0}{" "}
+              h
+            </div>
+            <div className="text-muted-foreground">
+              {" "}
+              PAB:{" "}
+              {byPrestationHours.find((p) => p.prestation === "PAB")?.total ??
+                0}{" "}
+              h
+            </div>
           </>
         }
       />
@@ -51,15 +105,18 @@ export function InvoiceStats() {
         code={
           <>
             <div className="line-clamp-1 flex gap-2 font-medium">
-              Taux horaire INF : 0,00 $
+              Taux horaire Soins infirmiers : 71,87 $
+            </div>
+            <div className="text-muted-foreground">
+              Taux horaire Inf Clinicien(ne) : 74,36 $
             </div>
             <div className="text-muted-foreground">
               {" "}
-              Taux horaire INF AUX : 0,00 $
+              Taux horaire INF AUX : 47,65 $
             </div>
             <div className="text-muted-foreground">
               {" "}
-              Taux horaire PAB : 0,00 $
+              Taux horaire PAB : 41,96 $
             </div>
           </>
         }

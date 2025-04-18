@@ -1,7 +1,7 @@
 import { InvoiceShiftsTable } from "@/components/invoice-shifts-table";
 import { InvoiceStats } from "@/components/invoice-stats";
 import { Badge } from "@/components/ui/badge";
-import { fetchInvoice } from "@/lib/data";
+import { fetchInvoice, fetchStatus } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 import { Metadata } from "next";
 
@@ -20,6 +20,7 @@ export default async function InvoiceDetailPage({
   const invoiceNumber = id;
   const [, month, year] = invoiceNumber.split("-");
   const date = new Date(parseInt(year), parseInt(month) - 1);
+  const status = await fetchStatus(invoiceNumber);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -34,13 +35,23 @@ export default async function InvoiceDetailPage({
             </div>
             <Badge
               variant="default"
-              className="bg-green-600 hover:bg-green-700"
+              className={
+                status === "Payée"
+                  ? "bg-green-600 hover:bg-green-700"
+                  : status === "Envoyée"
+                  ? "bg-indigo-600 hover:bg-indigo-700"
+                  : status === "Prête"
+                  ? "bg-blue-500 hover:bg-blue-600"
+                  : status === "À compléter"
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-gray-500 hover:bg-gray-600"
+              }
             >
-              Payée
+              {status}
             </Badge>
           </div>
 
-          <InvoiceStats />
+          <InvoiceStats num_facture={invoiceNumber} />
 
           <InvoiceShiftsTable shifts={shifts} />
         </div>
