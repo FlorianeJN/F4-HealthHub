@@ -311,3 +311,17 @@ export async function fetchStatus(num_facture: string) {
     throw new Error("Error fetching status");
   }
 }
+
+export async function fetchAverageRate(num_facture: string) {
+  try {
+    const result = await sql<{ taux_moyen: number | null }[]>`
+    SELECT ROUND(AVG(taux_horaire), 2) AS taux_moyen
+    FROM quart
+    WHERE num_facture = ${num_facture}
+  `;
+    return formatter.format(result[0]?.taux_moyen ?? 0);
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error fetching average rate");
+  }
+}

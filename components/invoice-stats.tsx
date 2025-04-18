@@ -1,4 +1,5 @@
 import {
+  fetchAverageRate,
   fetchInvoiceAmounts,
   fetchNumberOfShifts,
   fetchTotalHours,
@@ -15,6 +16,8 @@ export async function InvoiceStats({ num_facture }: { num_facture: string }) {
 
   const { total: totalHours, byPrestation: byPrestationHours } =
     await fetchTotalHours(num_facture);
+
+  const tauxHoraireMoyen = await fetchAverageRate(num_facture);
 
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:grid-cols-2 @xl/main:grid-cols-4">
@@ -101,7 +104,7 @@ export async function InvoiceStats({ num_facture }: { num_facture: string }) {
 
       <Tuile
         title="Taux horaire moyen"
-        value="0,00 $"
+        value={tauxHoraireMoyen}
         code={
           <>
             <div className="line-clamp-1 flex gap-2 font-medium">
