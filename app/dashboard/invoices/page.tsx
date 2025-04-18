@@ -1,5 +1,6 @@
 import { InvoiceStats } from "@/components/invoice-stats";
 import { InvoiceTable } from "@/components/invoice-table";
+import { fetchInvoices } from "@/lib/data";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,7 +8,9 @@ export const metadata: Metadata = {
   description: "Gérez vos factures et paiements",
 };
 
-export default function InvoicesPage() {
+export default async function InvoicesPage() {
+  const data = await fetchInvoices();
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">
@@ -22,7 +25,7 @@ export default function InvoicesPage() {
           </div>
 
           <InvoiceStats />
-          <InvoiceTable />
+          <InvoiceTable invoices={data} />
         </div>
       </div>
     </div>

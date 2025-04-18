@@ -9,7 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconPlus,
+} from "@tabler/icons-react";
 import {
   ColumnDef,
   flexRender,
@@ -25,8 +29,9 @@ interface InvoiceDataTableProps<TData, TValue> {
 
 export function InvoiceDataTable<TData, TValue>({
   columns,
-  data,
+  data = [],
 }: InvoiceDataTableProps<TData, TValue>) {
+  console.log(data);
   const table = useReactTable({
     data,
     columns,
@@ -41,6 +46,12 @@ export function InvoiceDataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button className="gap-2">
+          <IconPlus className="h-4 w-4" />
+          Créer une nouvelle facture
+        </Button>
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -48,7 +59,10 @@ export function InvoiceDataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className="text-base font-semibold"
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -62,14 +76,24 @@ export function InvoiceDataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {data.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center text-base"
+                >
+                  Aucune facture disponible
+                </TableCell>
+              </TableRow>
+            ) : (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="hover:bg-muted/50"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="py-4 text-base">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -78,15 +102,6 @@ export function InvoiceDataTable<TData, TValue>({
                   ))}
                 </TableRow>
               ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  Aucune facture disponible
-                </TableCell>
-              </TableRow>
             )}
           </TableBody>
         </Table>

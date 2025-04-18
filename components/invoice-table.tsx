@@ -1,19 +1,71 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { fetchInvoices } from "@/lib/data";
+"use client";
 
-import { invoiceColumns } from "@/lib/column-definitions";
+import { InvoiceActions } from "@/components/invoice-actions";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Invoice } from "@/lib/definitions";
+import { ColumnDef } from "@tanstack/react-table";
 import { InvoiceDataTable } from "./invoice-data-table";
 
-export async function InvoiceTable() {
-  const data = await fetchInvoices();
+const columns: ColumnDef<Invoice>[] = [
+  {
+    accessorKey: "numero_facture",
+    header: "Numéro",
+  },
+  {
+    accessorKey: "nom_partenaire",
+    header: "Partenaire",
+  },
+  {
+    accessorKey: "date_emission",
+    header: "Date d'émission",
+    cell: ({ row }) => row.getValue("date_emission"),
+  },
+  {
+    accessorKey: "montant_total",
+    header: "Montant",
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("montant_total"));
+      return new Intl.NumberFormat("fr-CA", {
+        style: "currency",
+        currency: "CAD",
+      }).format(amount);
+    },
+  },
+  {
+    accessorKey: "statut",
+    header: "Statut",
+    cell: ({ row }) => {
+      const status = row.getValue("statut") as string;
+      return (
+        <Badge
+          variant={
+            status === "payée"
+              ? "default"
+              : status === "en attente"
+              ? "secondary"
+              : "destructive"
+          }
+        >
+          {status}
+        </Badge>
+      );
+    },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <InvoiceActions invoice={row.original} />,
+  },
+];
 
+export function InvoiceTable({ invoices }: { invoices: Invoice[] }) {
   return (
-    <Card className="bg-card shadow-sm">
-      <CardHeader className="border-b bg-muted/50">
-        <CardTitle className="text-lg">Liste des factures</CardTitle>
+    <Card>
+      <CardHeader>
+        <CardTitle>Liste des factures</CardTitle>
       </CardHeader>
-      <CardContent className="px-2">
-        <InvoiceDataTable data={data} columns={invoiceColumns} />
+      <CardContent>
+        <InvoiceDataTable columns={columns} data={invoices} />
       </CardContent>
     </Card>
   );
