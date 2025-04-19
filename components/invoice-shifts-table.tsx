@@ -14,7 +14,7 @@ import { formatDate } from "@/lib/utils";
 import { Button } from "./ui/button";
 
 import { deleteShift } from "@/lib/actions";
-import { IconTrash } from "@tabler/icons-react";
+import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 import ConfirmationModal from "./confirmationModal";
 
@@ -52,10 +52,24 @@ export function InvoiceShiftsTable({ shifts }: InvoiceShiftsTableProps) {
     setIsOpen(false);
   }
 
+  function handleAddShift() {
+    //TODO: Add shift using a modal
+    console.log("add shift");
+  }
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Liste des quarts</CardTitle>
+        <div className="flex justify-end">
+          <Button
+            className="gap-2 hover:cursor-pointer"
+            onClick={handleAddShift}
+          >
+            <IconPlus className="h-4 w-4" />
+            Ajouter un quart
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="rounded-md border">
