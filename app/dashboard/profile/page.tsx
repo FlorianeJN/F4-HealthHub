@@ -1,5 +1,5 @@
 import { ProfileForm } from "@/components/profile-form";
-import { getEnterpriseInfo } from "@/lib/actions";
+import { fetchEnterpriseInfo } from "@/lib/data";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default async function Page() {
   await new Promise((resolve) => setTimeout(resolve, 3000));
   // Récupérer les données de l'entreprise
-  const { enterprise, address } = await getEnterpriseInfo();
+  const { enterprise, address } = await fetchEnterpriseInfo();
 
   return (
     <div className="flex flex-1 flex-col">

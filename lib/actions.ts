@@ -241,31 +241,15 @@ export async function saveEnterpriseInfo(formData: FormData) {
   }
 }
 
-export async function getEnterpriseInfo() {
+export async function deleteShift(id: number) {
   "use server";
 
   try {
-    // Récupérer les informations de l'entreprise
-    const enterpriseResult = await sql`
-      SELECT * FROM entreprise LIMIT 1
-    `;
-
-    if (enterpriseResult.length === 0) {
-      return { enterprise: null, address: null };
-    }
-
-    const enterprise = enterpriseResult[0];
-
-    // Récupérer l'adresse associée à l'entreprise
-    const addressResult = await sql`
-      SELECT * FROM adresse WHERE link = ${enterprise.id}
-    `;
-
-    const address = addressResult.length > 0 ? addressResult[0] : null;
-
-    return { enterprise, address };
+    await sql`DELETE FROM quart WHERE id = ${id}`;
+    revalidatePath("/dashboard/invoices");
+    return { success: true };
   } catch (e) {
-    console.error("Erreur lors de la récupération des informations:", e);
-    throw new Error("Erreur de base de données");
+    console.error("Erreur lors de la suppression du quart :", e);
+    throw new Error("Database Error");
   }
 }

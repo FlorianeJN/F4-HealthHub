@@ -62,8 +62,6 @@ import AddEmployeeForm from "./add-employee-form";
 import AddPartnerForm from "./add-partner-form";
 import Modal from "./modal";
 
-// Your updated Search component
-
 // ----------------------------------------------------------------
 // PlainRow component (renders a single row)
 // ----------------------------------------------------------------
