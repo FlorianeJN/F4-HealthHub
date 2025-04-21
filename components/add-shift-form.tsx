@@ -67,6 +67,17 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
 
   const [employees, setEmployees] = useState<Employee[]>([]);
 
+  //Extracting the form watchers for use effect dependencies
+  const tauxHoraireWatcher = form.watch("tauxHoraire");
+  const tempsTotalWatcher = form.watch("tempsTotal");
+  const tempsDoubleWatcher = form.watch("tempsDouble");
+  const tempsDemiWatcher = form.watch("tempsDemi");
+  const pauseCheckWatcher = form.watch("pauseCheck");
+  const debutQuartWatcher = form.watch("debutQuart");
+  const finQuartWatcher = form.watch("finQuart");
+  const pauseWatcher = form.watch("pause");
+  const prestationWatcher = form.watch("prestation");
+
   // Function to fetch employees from the database
   useEffect(() => {
     //Not using async/await here because by the time the user gets to this point, the data is already fetched and set in the state.
@@ -87,7 +98,7 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
     if (demi) noteLines.push("Temps et demi appliqué");
 
     form.setValue("notes", noteLines.join("\n"));
-  }, [form.watch("tempsDouble"), form.watch("tempsDemi")]);
+  }, [form, tempsDoubleWatcher, tempsDemiWatcher]);
 
   // Effect to show the calculated total time in the form
   // This effect will run whenever the start time, end time, or pause time changes
@@ -119,10 +130,11 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
       form.setValue("tempsTotal", `${hours}:${minutes}`);
     }
   }, [
-    form.watch("debutQuart"),
-    form.watch("finQuart"),
-    form.watch("pause"),
-    form.watch("pauseCheck"),
+    form,
+    debutQuartWatcher,
+    finQuartWatcher,
+    pauseWatcher,
+    pauseCheckWatcher,
   ]);
 
   // Effect to set the hourly rate based on the selected prestation
@@ -147,11 +159,7 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
 
       form.setValue("tauxHoraire", baseTaux.toFixed(2));
     }
-  }, [
-    form.watch("prestation"),
-    form.watch("tempsDouble"),
-    form.watch("tempsDemi"),
-  ]);
+  }, [form, prestationWatcher, tempsDoubleWatcher, tempsDemiWatcher]);
 
   // Effect to calculate the amount based on the hourly rate and total time
   // This effect will run whenever the total time or hourly rate changes
@@ -167,7 +175,7 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
         form.setValue("montantHorsTaxes", montant.toFixed(2));
       }
     }
-  }, [form.watch("tempsTotal"), form.watch("tauxHoraire")]);
+  }, [form, tauxHoraireWatcher, tempsTotalWatcher]);
 
   function handleAction() {
     console.log("Form data:", form.getValues());
