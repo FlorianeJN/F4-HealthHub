@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { DatePickerDemo } from "./date-picker";
+import { DatePicker } from "./date-picker";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import {
@@ -13,6 +13,13 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 const formSchema = z.object({
   date: z.string().min(1, "La date est requise."),
@@ -84,24 +91,44 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
                 <FormField
                   control={form.control}
                   name="date"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Date</FormLabel>
                       <FormControl>
-                        <DatePickerDemo />
+                        <DatePicker
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="prestation"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Prestation</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Select>
+                          <SelectTrigger className="w-[200px]">
+                            <SelectValue placeholder="Choisir une prestation" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="inf_clinicien">
+                              Inf Clinicien(ne)
+                            </SelectItem>
+                            <SelectItem value="soins_infirmiers">
+                              Soins Infirmiers
+                            </SelectItem>
+                            <SelectItem value="inf_aux">
+                              Inf Auxiliaire
+                            </SelectItem>
+                            <SelectItem value="pab">PAB</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
