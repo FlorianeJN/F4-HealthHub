@@ -54,7 +54,7 @@ function useSidebar() {
 }
 
 function SidebarProvider({
-  defaultOpen = true,
+  defaultOpen = false, // This is the default state of the sidebar.
   open: openProp,
   onOpenChange: setOpenProp,
   className,

@@ -1,3 +1,4 @@
+import { addShift } from "@/lib/actions";
 import { fetchEmployees } from "@/lib/data";
 import { Employee } from "@/lib/definitions";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -138,7 +139,7 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
   ]);
 
   // Effect to set the hourly rate based on the selected prestation
-  // This effect will run whenever the prestation changes
+  // This effect will run whenever the prestation, the double time or half time checkbox changes
   useEffect(() => {
     const prestation = form.getValues("prestation");
 
@@ -177,18 +178,15 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
     }
   }, [form, tauxHoraireWatcher, tempsTotalWatcher]);
 
-  function handleAction() {
-    console.log("Form data:", form.getValues());
+  function handleAction(formData: FormData) {
+    addShift(formData);
   }
 
   return (
     <div className="fixed inset-0 z-50  bg-opacity-50 flex items-center justify-center p-4">
       <div className="bg-background rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6">
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleAction)}
-            className="space-y-6"
-          >
+          <form action={handleAction} className="space-y-6">
             {/* Header */}
             <div className="flex flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
               <h2 className="text-lg  font-semibold text-foreground md:text-2xl">

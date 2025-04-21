@@ -9,8 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function InvoicesPage() {
-  await new Promise((resolve) => setTimeout(resolve, 3000));
-
   const data = await fetchInvoices();
 
   return (

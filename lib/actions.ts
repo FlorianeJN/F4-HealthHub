@@ -241,6 +241,32 @@ export async function saveEnterpriseInfo(formData: FormData) {
   }
 }
 
+export async function addShift(formData: FormData) {
+  "use server";
+
+  const data = {
+    date: formData.get("date") as string,
+    prestation: formData.get("prestation") as string,
+    debutQuart: formData.get("debutQuart") as string,
+    finQuart: formData.get("finQuart") as string,
+    pauseCheck: formData.get("pauseCheck") === "true",
+    pause: formData.get("pause") as string | null,
+    tempsDouble: formData.get("tempsDouble") === "true",
+    tempsDemi: formData.get("tempsDemi") === "true",
+    tempsTotal: formData.get("tempsTotal") as string,
+    tauxHoraire: formData.get("tauxHoraire") as string,
+    montantHorsTaxes: formData.get("montantHorsTaxes") as string,
+    useQuartPredefini: formData.get("useQuartPredefini") === "true",
+    associerEmploye: formData.get("associerEmploye") === "true",
+    employeId: formData.get("employeId")
+      ? parseInt(formData.get("employeId") as string)
+      : undefined,
+    notes: formData.get("notes") as string,
+  };
+
+  console.log(" Données du quart :", data);
+}
+
 export async function deleteShift(id: number) {
   "use server";
 
