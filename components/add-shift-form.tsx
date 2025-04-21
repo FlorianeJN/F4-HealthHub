@@ -108,11 +108,14 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
                 <FormField
                   control={form.control}
                   name="prestation"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Prestation</FormLabel>
                       <FormControl>
-                        <Select>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
                           <SelectTrigger className="w-[200px]">
                             <SelectValue placeholder="Choisir une prestation" />
                           </SelectTrigger>

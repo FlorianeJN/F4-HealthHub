@@ -26,7 +26,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
 
   function handleOnSelect(selectedDate: Date | undefined) {
     if (selectedDate) {
-      onChange(selectedDate.toISOString().split("T")[0]); // send string "yyyy-mm-dd" to form
+      onChange(selectedDate.toISOString().split("T")[0]);
       setOpen(false);
     }
   }
