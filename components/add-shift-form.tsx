@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { DatePickerDemo } from "./date-picker";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import {
@@ -83,11 +84,11 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
                 <FormField
                   control={form.control}
                   name="date"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Date</FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <DatePickerDemo />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
