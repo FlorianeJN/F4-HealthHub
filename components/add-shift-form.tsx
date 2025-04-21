@@ -1,4 +1,7 @@
+import { fetchEmployees } from "@/lib/data";
+import { Employee } from "@/lib/definitions";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { DatePicker } from "./date-picker";
@@ -33,6 +36,10 @@ const formSchema = z.object({
   tempsTotal: z.string().min(1, "Le temps total est requis."),
   tauxHoraire: z.string().min(1, "Le taux horaire est requis."),
   montantHorsTaxes: z.string().min(1, "Le montant HT est requis."),
+  useQuartPredefini: z.boolean().optional(),
+  employeId: z.number().optional(),
+  associerEmploye: z.boolean().optional(),
+  notes: z.string().optional(),
 });
 
 type addShiftFormProps = {
@@ -48,14 +55,119 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
       debutQuart: "",
       finQuart: "",
       pauseCheck: false,
-      pause: "",
+      pause: "00:45",
       tempsDouble: false,
       tempsDemi: false,
       tempsTotal: "",
       tauxHoraire: "",
       montantHorsTaxes: "",
+      useQuartPredefini: false,
     },
   });
+
+  const [employees, setEmployees] = useState<Employee[]>([]);
+
+  // Function to fetch employees from the database
+  useEffect(() => {
+    //Not using async/await here because by the time the user gets to this point, the data is already fetched and set in the state.
+    fetchEmployees().then((data: Employee[]) => {
+      setEmployees(data);
+    });
+  }, []);
+
+  // Effect to update the notes based on the selected checkboxes
+  // This effect will run whenever the tempsDouble or tempsDemi checkboxes change
+  useEffect(() => {
+    const double = form.getValues("tempsDouble");
+    const demi = form.getValues("tempsDemi");
+
+    const noteLines: string[] = [];
+
+    if (double) noteLines.push("Temps double appliqué");
+    if (demi) noteLines.push("Temps et demi appliqué");
+
+    form.setValue("notes", noteLines.join("\n"));
+  }, [form.watch("tempsDouble"), form.watch("tempsDemi")]);
+
+  // Effect to show the calculated total time in the form
+  // This effect will run whenever the start time, end time, or pause time changes
+  useEffect(() => {
+    const debut = form.getValues("debutQuart");
+    const fin = form.getValues("finQuart");
+    const pauseCheck = form.getValues("pauseCheck");
+    const pause = pauseCheck ? form.getValues("pause") || "00:00" : "00:00";
+
+    if (debut && fin) {
+      const getTimeInMinutes = (timeStr: string): number => {
+        const [h, m] = timeStr.split(":").map(Number);
+        return h * 60 + m;
+      };
+
+      const start = getTimeInMinutes(debut);
+      let end = getTimeInMinutes(fin);
+
+      if (isNaN(start) || isNaN(end)) return;
+
+      if (end <= start) end += 24 * 60;
+
+      const totalMinutes = end - start - getTimeInMinutes(pause);
+      const hours = Math.floor(totalMinutes / 60)
+        .toString()
+        .padStart(2, "0");
+      const minutes = (totalMinutes % 60).toString().padStart(2, "0");
+
+      form.setValue("tempsTotal", `${hours}:${minutes}`);
+    }
+  }, [
+    form.watch("debutQuart"),
+    form.watch("finQuart"),
+    form.watch("pause"),
+    form.watch("pauseCheck"),
+  ]);
+
+  // Effect to set the hourly rate based on the selected prestation
+  // This effect will run whenever the prestation changes
+  useEffect(() => {
+    const prestation = form.getValues("prestation");
+
+    const tauxMap: Record<string, number> = {
+      inf_clinicien: 74.36,
+      soins_infirmiers: 71.87,
+      inf_aux: 47.65,
+      pab: 41.96,
+    };
+
+    if (prestation in tauxMap) {
+      let baseTaux = tauxMap[prestation];
+      if (form.getValues("tempsDouble")) {
+        baseTaux *= 2;
+      } else if (form.getValues("tempsDemi")) {
+        baseTaux *= 1.5;
+      }
+
+      form.setValue("tauxHoraire", baseTaux.toFixed(2));
+    }
+  }, [
+    form.watch("prestation"),
+    form.watch("tempsDouble"),
+    form.watch("tempsDemi"),
+  ]);
+
+  // Effect to calculate the amount based on the hourly rate and total time
+  // This effect will run whenever the total time or hourly rate changes
+  useEffect(() => {
+    const taux = parseFloat(form.getValues("tauxHoraire"));
+    const total = form.getValues("tempsTotal");
+
+    if (taux && total && total.includes(":")) {
+      const [h, m] = total.split(":").map(Number);
+      if (!isNaN(h) && !isNaN(m)) {
+        const totalHeures = h + m / 60;
+        const montant = totalHeures * taux;
+        form.setValue("montantHorsTaxes", montant.toFixed(2));
+      }
+    }
+  }, [form.watch("tempsTotal"), form.watch("tauxHoraire")]);
 
   function handleAction() {
     console.log("Form data:", form.getValues());
@@ -137,6 +249,62 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="useQuartPredefini"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-2">
+                      <FormControl>
+                        <Checkbox
+                          id="use-quart-predefini"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormLabel htmlFor="use-quart-predefini">
+                        Utiliser un quart prédéfini ?
+                      </FormLabel>
+                    </FormItem>
+                  )}
+                />
+
+                {form.watch("useQuartPredefini") && (
+                  <FormItem>
+                    <FormLabel>Quart prédéfini</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) => {
+                          const quarts = {
+                            "7-15": { debut: "07:00", fin: "15:00" },
+                            "15-23": { debut: "15:00", fin: "23:00" },
+                            "23-7": { debut: "23:00", fin: "07:00" },
+                            "7-19": { debut: "07:00", fin: "19:00" },
+                            "19-7": { debut: "19:00", fin: "07:00" },
+                          };
+
+                          const { debut, fin } =
+                            quarts[value as keyof typeof quarts];
+
+                          form.setValue("debutQuart", debut);
+                          form.setValue("finQuart", fin);
+                        }}
+                      >
+                        <SelectTrigger className="w-[200px]">
+                          <SelectValue placeholder="Choisir un quart" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="7-15">7h00 - 15h00</SelectItem>
+                          <SelectItem value="15-23">15h00 - 23h00</SelectItem>
+                          <SelectItem value="23-7">23h00 - 7h00</SelectItem>
+                          <SelectItem value="7-19">7h00 - 19h00</SelectItem>
+                          <SelectItem value="19-7">19h00 - 7h00</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                  </FormItem>
+                )}
+
                 <FormField
                   control={form.control}
                   name="debutQuart"
@@ -236,7 +404,12 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
                     <FormItem>
                       <FormLabel>Temps total</FormLabel>
                       <FormControl>
-                        <Input type="time" {...field} />
+                        <Input
+                          type="text"
+                          {...field}
+                          placeholder="Généré automatiquement"
+                          readOnly
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -249,7 +422,13 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
                     <FormItem>
                       <FormLabel>Taux horaire</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" {...field} />
+                        <Input
+                          type="number"
+                          step="0.01"
+                          {...field}
+                          placeholder="Généré automatiquement"
+                          readOnly
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -262,30 +441,90 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
                     <FormItem>
                       <FormLabel>Montant HT</FormLabel>
                       <FormControl>
-                        <Input type="number" step="0.01" {...field} />
+                        <Input
+                          type="number"
+                          step="0.01"
+                          {...field}
+                          placeholder="Généré automatiquement"
+                          readOnly
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <div className="flex items-center gap-2">
-                  <Checkbox id="associer-employe" />
-                  <label htmlFor="associer-employe">
-                    Associer un employé ?
-                  </label>
-                </div>
-                <div>
-                  <FormLabel>Employé</FormLabel>
-                  <Input placeholder="Sélectionner..." disabled />
-                </div>
-                <div>
-                  <FormLabel>Notes</FormLabel>
-                  <textarea
-                    className="w-full border rounded p-2"
-                    rows={4}
-                    placeholder="..."
+                <FormField
+                  control={form.control}
+                  name="associerEmploye"
+                  render={({ field }) => (
+                    <FormItem className="flex items-center gap-2">
+                      <FormControl>
+                        <Checkbox
+                          id="associer-employe"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormLabel htmlFor="associer-employe">
+                        Associer un employé ?
+                      </FormLabel>
+                    </FormItem>
+                  )}
+                />
+
+                {form.watch("associerEmploye") && (
+                  <FormField
+                    control={form.control}
+                    name="employeId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Employé</FormLabel>
+                        <FormControl>
+                          <Select
+                            value={field.value?.toString() ?? ""}
+                            onValueChange={(val) =>
+                              field.onChange(parseInt(val))
+                            }
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Sélectionner un employé" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {employees.map((emp) => (
+                                <SelectItem
+                                  key={emp.id}
+                                  value={emp.id.toString()}
+                                >
+                                  {emp.prenom} {emp.nom}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
+                )}
+
+                <FormField
+                  control={form.control}
+                  name="notes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Notes</FormLabel>
+                      <FormControl>
+                        <textarea
+                          className="w-full border rounded p-2"
+                          rows={4}
+                          placeholder="..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               {/* Submit */}
