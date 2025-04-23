@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "./ui/select";
 
-const formSchema = z.object({
+export const formSchema = z.object({
   date: z.string().min(1, "La date est requise."),
   prestation: z.string().min(1, "La prestation est requise."),
   debutQuart: z.string().min(1, "L'heure de début est requise."),
@@ -178,15 +178,20 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
     }
   }, [form, tauxHoraireWatcher, tempsTotalWatcher]);
 
-  function handleAction(formData: FormData) {
-    addShift(formData);
+  function handleAction(data: z.infer<typeof formSchema>) {
+    //  const formData = new FormData(data);
+    console.log("Form data:", data);
+    addShift(data);
   }
 
   return (
     <div className="fixed inset-0 z-50  bg-opacity-50 flex items-center justify-center p-4">
       <div className="bg-background rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6">
         <Form {...form}>
-          <form action={handleAction} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(handleAction)}
+            className="space-y-6"
+          >
             {/* Header */}
             <div className="flex flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
               <h2 className="text-lg  font-semibold text-foreground md:text-2xl">
@@ -210,7 +215,7 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
                   control={form.control}
                   name="date"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem aria-required>
                       <FormLabel>Date</FormLabel>
                       <FormControl>
                         <DatePicker
