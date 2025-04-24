@@ -76,6 +76,7 @@ export default function EditPartnerForm({
         onClose();
         setTimeout(() => {
           window.location.reload();
+          //TODO : REMOVE THE RELOAD
         }, 200);
       }, 2000);
     });

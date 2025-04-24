@@ -42,19 +42,12 @@ export function InvoiceShiftsTable({ shifts }: InvoiceShiftsTableProps) {
     setIsOpen(true);
   }
 
-  function handleConfirmDelete() {
+  async function handleConfirmDelete() {
     if (!shiftToDelete) {
       return;
     }
 
-    deleteShift(shiftToDelete)
-      .then(() => {
-        // Refresh the page or update the state to reflect the deletion
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.error("Error deleting shift:", error);
-      });
+    await deleteShift(shiftToDelete);
 
     setIsOpen(false);
   }
@@ -64,7 +57,6 @@ export function InvoiceShiftsTable({ shifts }: InvoiceShiftsTableProps) {
   }
 
   function handleAddShift() {
-    //TODO: Add shift using a modal
     openModal();
   }
 

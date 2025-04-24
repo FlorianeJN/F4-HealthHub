@@ -28,7 +28,6 @@ export function PartnerActions({ partner }: PartnerActionsProps) {
     setIsDeleting(true);
     try {
       await deletePartner(partner.id);
-      window.location.reload();
     } catch (error) {
       console.error("Erreur lors de la suppression:", error);
     } finally {

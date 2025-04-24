@@ -2,6 +2,7 @@ import { addShift } from "@/lib/actions";
 import { fetchEmployees } from "@/lib/data";
 import { Employee } from "@/lib/definitions";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -31,7 +32,7 @@ export const formSchema = z.object({
   debutQuart: z.string().min(1, "L'heure de début est requise."),
   finQuart: z.string().min(1, "L'heure de fin est requise."),
   pauseCheck: z.boolean(),
-  pause: z.string().optional(),
+  pause: z.string(),
   tempsDouble: z.boolean(),
   tempsDemi: z.boolean(),
   tempsTotal: z.string().min(1, "Le temps total est requis."),
@@ -40,7 +41,7 @@ export const formSchema = z.object({
   useQuartPredefini: z.boolean().optional(),
   employeId: z.number().optional(),
   associerEmploye: z.boolean().optional(),
-  notes: z.string().optional(),
+  notes: z.string(),
 });
 
 type addShiftFormProps = {
@@ -48,6 +49,10 @@ type addShiftFormProps = {
 };
 
 export default function AddShiftForm({ onClose }: addShiftFormProps) {
+  //Extracting the invoice number from the URL
+  const pathName = usePathname();
+  const numFacture = pathName.split("/").pop() || ""; // Get the last part of the URL
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,12 +61,13 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
       debutQuart: "",
       finQuart: "",
       pauseCheck: false,
-      pause: "00:45",
+      pause: "00:00",
       tempsDouble: false,
       tempsDemi: false,
       tempsTotal: "",
       tauxHoraire: "",
       montantHorsTaxes: "",
+      notes: " ",
       useQuartPredefini: false,
     },
   });
@@ -86,6 +92,16 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
       setEmployees(data);
     });
   }, []);
+
+  // Effect to update the pause time based on the checkbox state
+  // This effect will run whenever the pauseCheck checkbox changes
+  useEffect(() => {
+    if (form.watch("pauseCheck")) {
+      form.setValue("pause", "00:45");
+    } else {
+      form.setValue("pause", "00:00");
+    }
+  }, [form, pauseCheckWatcher]);
 
   // Effect to update the notes based on the selected checkboxes
   // This effect will run whenever the tempsDouble or tempsDemi checkboxes change
@@ -180,8 +196,10 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
 
   function handleAction(data: z.infer<typeof formSchema>) {
     //  const formData = new FormData(data);
-    console.log("Form data:", data);
-    addShift(data);
+
+    console.log("data:", data);
+    addShift(data, numFacture);
+    form.reset();
   }
 
   return (
@@ -227,7 +245,6 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="prestation"
@@ -541,7 +558,9 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
               {/* Submit */}
 
               <div className="col-span-1 md:col-span-2 flex justify-center mt-6">
-                <Button>Ajouter le quart</Button>
+                <Button className="hover:cursor-pointer">
+                  Ajouter le quart
+                </Button>
               </div>
             </div>
           </form>

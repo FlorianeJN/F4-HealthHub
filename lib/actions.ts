@@ -243,10 +243,51 @@ export async function saveEnterpriseInfo(formData: FormData) {
   }
 }
 
-export async function addShift(data: z.infer<typeof formSchema>) {
+export async function addShift(
+  data: z.infer<typeof formSchema>,
+  numFacture: string
+) {
   "use server";
 
   console.log(" Données du quart :", data);
+  console.log("Numéro de facture :", numFacture);
+  const {
+    date,
+    debutQuart,
+    finQuart,
+    pause,
+    tempsTotal,
+    prestation,
+    tauxHoraire,
+    montantHorsTaxes,
+    notes,
+  } = data;
+
+  let prestationModifiee;
+
+  //Conversion pour le bon nom de prestation
+  if (prestation === "soins_infirmiers") {
+    prestationModifiee = "SOINS INFIRMIERS";
+  } else if (prestation === "inf_clinicien") {
+    prestationModifiee = "INF CLINICIEN(NE)";
+  } else if (prestation === "inf_aux") {
+    prestationModifiee = "INF AUXILIAIRE";
+  } else {
+    prestationModifiee = "PAB";
+  }
+
+  try {
+    await sql`INSERT INTO quart (num_facture,date_quart,debut_quart,fin_quart,pause,temps_total,prestation,taux_horaire,montant_total,notes) VALUES (${numFacture}, ${date}, ${debutQuart}, ${finQuart},${pause}, ${tempsTotal}, ${prestationModifiee}, ${tauxHoraire}, ${montantHorsTaxes},${notes} )`;
+
+    console.log("Ajout complété");
+
+    //Mettre a jour le montant de la facture
+
+    revalidatePath(`/dashboard/invoices`);
+    revalidatePath(`/dashboard/invoices/${numFacture}`);
+  } catch (e) {
+    console.error("Erreur lors de l'insertion du quart : ", e);
+  }
 }
 
 export async function deleteShift(id: number) {
@@ -254,7 +295,11 @@ export async function deleteShift(id: number) {
 
   try {
     await sql`DELETE FROM quart WHERE id = ${id}`;
+
+    //Mettre a jour le montant de la facture
+
     revalidatePath("/dashboard/invoices");
+    revalidatePath(`/dashboard/invoices/${id}`);
     return { success: true };
   } catch (e) {
     console.error("Erreur lors de la suppression du quart :", e);
