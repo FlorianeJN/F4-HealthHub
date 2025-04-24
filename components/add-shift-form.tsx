@@ -52,6 +52,7 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
   //Extracting the invoice number from the URL
   const pathName = usePathname();
   const numFacture = pathName.split("/").pop() || ""; // Get the last part of the URL
+  let addingShift: boolean = false;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -196,9 +197,10 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
 
   function handleAction(data: z.infer<typeof formSchema>) {
     //  const formData = new FormData(data);
-
+    addingShift = true;
     console.log("data:", data);
     addShift(data, numFacture);
+    addingShift = false;
     form.reset();
   }
 
@@ -558,8 +560,8 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
               {/* Submit */}
 
               <div className="col-span-1 md:col-span-2 flex justify-center mt-6">
-                <Button className="hover:cursor-pointer">
-                  Ajouter le quart
+                <Button className="hover:cursor-pointer" disabled={addingShift}>
+                  {addingShift ? "Ajout du quart ..." : "Ajouter le quart"}
                 </Button>
               </div>
             </div>
