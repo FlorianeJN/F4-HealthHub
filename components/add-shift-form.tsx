@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { z } from "zod";
 import { DatePicker } from "./date-picker";
 import { Button } from "./ui/button";
@@ -202,6 +203,7 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
     addShift(data, numFacture);
     addingShift = false;
     form.reset();
+    toast.success("Quart ajouté avec succès!");
   }
 
   return (

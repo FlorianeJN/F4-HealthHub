@@ -16,6 +16,7 @@ import { Button } from "./ui/button";
 import { deleteShift } from "@/lib/actions";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import AddShiftForm from "./add-shift-form";
 import ConfirmationModal from "./confirmationModal";
 import Modal from "./modal";
@@ -47,7 +48,15 @@ export function InvoiceShiftsTable({ shifts }: InvoiceShiftsTableProps) {
       return;
     }
 
-    await deleteShift(shiftToDelete);
+    const { success } = await deleteShift(shiftToDelete);
+
+    if (success) {
+      toast.success("Quart supprimé avec succès.");
+    } else {
+      toast.error(
+        "Problème lors de la suppression du quart. Veuillez réessayer plus tard."
+      );
+    }
 
     setIsOpen(false);
   }
