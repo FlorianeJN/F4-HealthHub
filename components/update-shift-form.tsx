@@ -1,13 +1,13 @@
-import { addShift } from "@/lib/actions";
 import { fetchEmployees } from "@/lib/data";
 import { Employee } from "@/lib/definitions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
+
 import { DatePicker } from "./date-picker";
+import { formSchema } from "./shift-form";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import {
@@ -27,34 +27,15 @@ import {
   SelectValue,
 } from "./ui/select";
 
-export const formSchema = z.object({
-  date: z.string().min(1, "La date est requise."),
-  prestation: z.string().min(1, "La prestation est requise."),
-  debutQuart: z.string().min(1, "L'heure de début est requise."),
-  finQuart: z.string().min(1, "L'heure de fin est requise."),
-  pauseCheck: z.boolean(),
-  pause: z.string(),
-  tempsDouble: z.boolean(),
-  tempsDemi: z.boolean(),
-  tempsTotal: z.string().min(1, "Le temps total est requis."),
-  tauxHoraire: z.string().min(1, "Le taux horaire est requis."),
-  montantHorsTaxes: z.string().min(1, "Le montant HT est requis."),
-  useQuartPredefini: z.boolean().optional(),
-  employeId: z.number().optional(),
-  associerEmploye: z.boolean().optional(),
-  notes: z.string(),
-});
-
-type addShiftFormProps = {
+type updateShiftFormProps = {
+  shiftId: number;
   onClose: () => void;
 };
 
-export default function AddShiftForm({ onClose }: addShiftFormProps) {
-  //Extracting the invoice number from the URL
-  const pathName = usePathname();
-  const numFacture = pathName.split("/").pop() || ""; // Get the last part of the URL
-  let addingShift: boolean = false;
-
+export default function UpdateShiftForm({
+  shiftId,
+  onClose,
+}: updateShiftFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -69,155 +50,37 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
       tempsTotal: "",
       tauxHoraire: "",
       montantHorsTaxes: "",
-      notes: " ",
+      notes: "",
       useQuartPredefini: false,
+      associerEmploye: false,
     },
   });
 
   const [employees, setEmployees] = useState<Employee[]>([]);
 
-  //Extracting the form watchers for use effect dependencies
-  const tauxHoraireWatcher = form.watch("tauxHoraire");
-  const tempsTotalWatcher = form.watch("tempsTotal");
-  const tempsDoubleWatcher = form.watch("tempsDouble");
-  const tempsDemiWatcher = form.watch("tempsDemi");
-  const pauseCheckWatcher = form.watch("pauseCheck");
-  const debutQuartWatcher = form.watch("debutQuart");
-  const finQuartWatcher = form.watch("finQuart");
-  const pauseWatcher = form.watch("pause");
-  const prestationWatcher = form.watch("prestation");
-
-  // Function to fetch employees from the database
   useEffect(() => {
-    //Not using async/await here because by the time the user gets to this point, the data is already fetched and set in the state.
-    fetchEmployees().then((data: Employee[]) => {
-      setEmployees(data);
-    });
+    fetchEmployees().then(setEmployees);
   }, []);
 
-  // Effect to update the pause time based on the checkbox state
-  // This effect will run whenever the pauseCheck checkbox changes
-  useEffect(() => {
-    if (form.watch("pauseCheck")) {
-      form.setValue("pause", "00:45");
-    } else {
-      form.setValue("pause", "00:00");
-    }
-  }, [form, pauseCheckWatcher]);
-
-  // Effect to update the notes based on the selected checkboxes
-  // This effect will run whenever the tempsDouble or tempsDemi checkboxes change
-  useEffect(() => {
-    const double = form.getValues("tempsDouble");
-    const demi = form.getValues("tempsDemi");
-
-    const noteLines: string[] = [];
-
-    if (double) noteLines.push("Temps double appliqué");
-    if (demi) noteLines.push("Temps et demi appliqué");
-
-    form.setValue("notes", noteLines.join("\n"));
-  }, [form, tempsDoubleWatcher, tempsDemiWatcher]);
-
-  // Effect to show the calculated total time in the form
-  // This effect will run whenever the start time, end time, or pause time changes
-  useEffect(() => {
-    const debut = form.getValues("debutQuart");
-    const fin = form.getValues("finQuart");
-    const pauseCheck = form.getValues("pauseCheck");
-    const pause = pauseCheck ? form.getValues("pause") || "00:00" : "00:00";
-
-    if (debut && fin) {
-      const getTimeInMinutes = (timeStr: string): number => {
-        const [h, m] = timeStr.split(":").map(Number);
-        return h * 60 + m;
-      };
-
-      const start = getTimeInMinutes(debut);
-      let end = getTimeInMinutes(fin);
-
-      if (isNaN(start) || isNaN(end)) return;
-
-      if (end <= start) end += 24 * 60;
-
-      const totalMinutes = end - start - getTimeInMinutes(pause);
-      const hours = Math.floor(totalMinutes / 60)
-        .toString()
-        .padStart(2, "0");
-      const minutes = (totalMinutes % 60).toString().padStart(2, "0");
-
-      form.setValue("tempsTotal", `${hours}:${minutes}`);
-    }
-  }, [
-    form,
-    debutQuartWatcher,
-    finQuartWatcher,
-    pauseWatcher,
-    pauseCheckWatcher,
-  ]);
-
-  // Effect to set the hourly rate based on the selected prestation
-  // This effect will run whenever the prestation, the double time or half time checkbox changes
-  useEffect(() => {
-    const prestation = form.getValues("prestation");
-
-    const tauxMap: Record<string, number> = {
-      inf_clinicien: 74.36,
-      soins_infirmiers: 71.87,
-      inf_aux: 47.65,
-      pab: 41.96,
-    };
-
-    if (prestation in tauxMap) {
-      let baseTaux = tauxMap[prestation];
-      if (form.getValues("tempsDouble")) {
-        baseTaux *= 2;
-      } else if (form.getValues("tempsDemi")) {
-        baseTaux *= 1.5;
-      }
-
-      form.setValue("tauxHoraire", baseTaux.toFixed(2));
-    }
-  }, [form, prestationWatcher, tempsDoubleWatcher, tempsDemiWatcher]);
-
-  // Effect to calculate the amount based on the hourly rate and total time
-  // This effect will run whenever the total time or hourly rate changes
-  useEffect(() => {
-    const taux = parseFloat(form.getValues("tauxHoraire"));
-    const total = form.getValues("tempsTotal");
-
-    if (taux && total && total.includes(":")) {
-      const [h, m] = total.split(":").map(Number);
-      if (!isNaN(h) && !isNaN(m)) {
-        const totalHeures = h + m / 60;
-        const montant = totalHeures * taux;
-        form.setValue("montantHorsTaxes", montant.toFixed(2));
-      }
-    }
-  }, [form, tauxHoraireWatcher, tempsTotalWatcher]);
-
-  function handleAction(data: z.infer<typeof formSchema>) {
-    //  const formData = new FormData(data);
-    addingShift = true;
-    console.log("data:", data);
-    addShift(data, numFacture);
-    addingShift = false;
-    form.reset();
-    toast.success("Quart ajouté avec succès!");
-  }
+  const handleUpdate = (data: z.infer<typeof formSchema>) => {
+    console.log(data);
+    console.log(shiftId);
+    toast.success("Quart mis à jour avec succès!");
+    //onClose();
+  };
 
   return (
     <div className="fixed inset-0 z-50  bg-opacity-50 flex items-center justify-center p-4">
       <div className="bg-background rounded-lg shadow-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6">
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(handleAction)}
+            onSubmit={form.handleSubmit(handleUpdate)}
             className="space-y-6"
           >
             {/* Header */}
             <div className="flex flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
               <h2 className="text-lg  font-semibold text-foreground md:text-2xl">
-                Ajouter un Quart de travail
+                Mise à jour Quart de travail
               </h2>
               <button
                 type="button"
@@ -232,7 +95,6 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Left Column */}
               <div className="space-y-4">
-                {/* ... All left fields (date, prestation, début, etc.) */}
                 <FormField
                   control={form.control}
                   name="date"
@@ -350,6 +212,7 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="finQuart"
@@ -363,6 +226,7 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="pauseCheck"
@@ -455,7 +319,7 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
                       <FormLabel>Taux horaire</FormLabel>
                       <FormControl>
                         <Input
-                          type="number"
+                          type="text"
                           step="0.01"
                           {...field}
                           placeholder="Généré automatiquement"
@@ -562,8 +426,8 @@ export default function AddShiftForm({ onClose }: addShiftFormProps) {
               {/* Submit */}
 
               <div className="col-span-1 md:col-span-2 flex justify-center mt-6">
-                <Button className="hover:cursor-pointer" disabled={addingShift}>
-                  {addingShift ? "Ajout du quart ..." : "Ajouter le quart"}
+                <Button className="hover:cursor-pointer">
+                  Mettre a jour le quart
                 </Button>
               </div>
             </div>

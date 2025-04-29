@@ -1,6 +1,6 @@
 "use server";
 
-import { formSchema } from "@/components/add-shift-form";
+import { formSchema } from "@/components/shift-form";
 import { revalidatePath } from "next/cache";
 import postgres from "postgres";
 import { z } from "zod";

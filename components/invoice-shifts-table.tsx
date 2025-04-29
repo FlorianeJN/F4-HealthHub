@@ -17,30 +17,40 @@ import { deleteShift } from "@/lib/actions";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import AddShiftForm from "./add-shift-form";
 import ConfirmationModal from "./confirmationModal";
 import Modal from "./modal";
+import ShiftForm from "./shift-form";
 
 interface InvoiceShiftsTableProps {
   shifts: Shift[];
 }
 
+//TODO : FAIRE UPDATE DE QUARTS
+
 export function InvoiceShiftsTable({ shifts }: InvoiceShiftsTableProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [shiftToDelete, setShiftToDelete] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  function openModal() {
-    setIsModalOpen(true);
-  }
+  const [modalContent, setModalContent] = useState<
+    "add" | "update" | undefined
+  >(undefined);
+  const [shiftId, setShiftId] = useState<number>(0);
 
   function closeModal() {
     setIsModalOpen(false);
   }
 
   function handleDelete(shiftId: number) {
+    setModalContent(undefined);
     setShiftToDelete(shiftId);
     setIsOpen(true);
+  }
+
+  function handleUpdate(shiftId: number) {
+    setShiftId(shiftId);
+    setModalContent("update");
+    setIsModalOpen(true);
+    console.log("updating shift #: " + shiftId);
   }
 
   async function handleConfirmDelete() {
@@ -66,13 +76,19 @@ export function InvoiceShiftsTable({ shifts }: InvoiceShiftsTableProps) {
   }
 
   function handleAddShift() {
-    openModal();
+    setModalContent("add");
+    setIsModalOpen(true);
   }
 
   return (
     <>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <AddShiftForm onClose={closeModal} />
+        {modalContent === "add" && (
+          <ShiftForm mode="add" onClose={closeModal} />
+        )}
+        {modalContent === "update" && (
+          <ShiftForm mode="update" shiftId={shiftId} onClose={closeModal} />
+        )}
       </Modal>
       <Card>
         <CardHeader>
@@ -111,7 +127,11 @@ export function InvoiceShiftsTable({ shifts }: InvoiceShiftsTableProps) {
                   </TableRow>
                 ) : (
                   shifts.map((shift) => (
-                    <TableRow key={shift.id}>
+                    <TableRow
+                      key={shift.id}
+                      onClick={() => handleUpdate(shift.id)}
+                      className="hover:cursor-pointer"
+                    >
                       <TableCell>{formatDate(shift.date_quart)}</TableCell>
                       <TableCell>{shift.debut_quart}</TableCell>
                       <TableCell>{shift.fin_quart}</TableCell>
@@ -125,7 +145,10 @@ export function InvoiceShiftsTable({ shifts }: InvoiceShiftsTableProps) {
                           <Button
                             variant="outline"
                             className="hover:cursor-pointer"
-                            onClick={() => handleDelete(shift.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(shift.id);
+                            }}
                           >
                             <IconTrash size={16} className="text-red-600" />
                             <span className="sr-only">Supprimer</span>

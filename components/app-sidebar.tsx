@@ -23,36 +23,34 @@ import {
 import { UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
-const data = {
-  navItems: [
-    {
-      title: "Tableau de bord",
-      url: "/dashboard",
-      icon: IconDashboard,
-    },
-    {
-      title: "Factures",
-      url: "/dashboard/invoices",
-      icon: IconFileInvoice,
-    },
-    {
-      title: "Partenaires",
-      url: "/dashboard/partners",
-      icon: IconBriefcase,
-    },
-    {
-      title: "Employés",
-      url: "/dashboard/employees",
-      icon: IconUsers,
-    },
+const navItems = [
+  {
+    title: "Tableau de bord",
+    url: "/dashboard",
+    icon: IconDashboard,
+  },
+  {
+    title: "Factures",
+    url: "/dashboard/invoices",
+    icon: IconFileInvoice,
+  },
+  {
+    title: "Partenaires",
+    url: "/dashboard/partners",
+    icon: IconBriefcase,
+  },
+  {
+    title: "Employés",
+    url: "/dashboard/employees",
+    icon: IconUsers,
+  },
 
-    {
-      title: "Profil de l'entreprise",
-      url: "/dashboard/profile",
-      icon: IconUser,
-    },
-  ],
-};
+  {
+    title: "Profil de l'entreprise",
+    url: "/dashboard/profile",
+    icon: IconUser,
+  },
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useUser();
@@ -75,7 +73,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navItems} />
+        <NavMain items={navItems} />
       </SidebarContent>
       <SidebarFooter>
         <div className="flex flex-row  gap-x-3 ">
