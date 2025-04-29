@@ -58,6 +58,7 @@ export const ShiftSchema = z.object({
   montant_total: z.string(),
   temps_double: z.boolean(),
   temps_demi: z.boolean(),
+  notes: z.string(),
 });
 
 export type Shift = z.infer<typeof ShiftSchema>;

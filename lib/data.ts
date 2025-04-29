@@ -43,7 +43,7 @@ export async function fetchEnterpriseInfo() {
 export async function fetchShift(shiftId: number) {
   try {
     const data = await sql<Shift[]>`SELECT * FROM quart WHERE id = ${shiftId} `;
-    return data;
+    return data[0];
   } catch (e) {
     console.log(e);
     throw new Error("Error fetching shift #" + shiftId);

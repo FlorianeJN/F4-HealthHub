@@ -106,12 +106,40 @@ export default function ShiftForm(props: ShiftFormProps) {
       const fetchData = async () => {
         const { shiftId } = props;
         const data = await fetchShift(shiftId);
-        console.log(data); //TODO : PREPOPULATE THE FORM USING THE DATA
+
+        let prestation: string;
+
+        if (data.prestation === "SOINS INFIRMIERS") {
+          prestation = "soins_infirmiers";
+        } else if (data.prestation === "INF CLINICIEN(NE)") {
+          prestation = "inf_clinicien";
+        } else if (data.prestation === "INF AUXILIAIRE") {
+          prestation = "inf_aux";
+        } else {
+          prestation = "pab";
+        }
+
+        form.reset({
+          date: new Date(data.date_quart).toISOString().split("T")[0], // "2025-04-15"
+          prestation: prestation, // ex: "soins_infirmiers"
+          debutQuart: data.debut_quart.slice(0, 5),
+          finQuart: data.fin_quart.slice(0, 5),
+          pauseCheck: data.pause !== "00:00:00",
+          pause: data.pause.slice(0, 5),
+          tempsDouble: data.notes.includes("Temps double appliqué"),
+          tempsDemi: data.notes.includes("Temps et demi appliqué"),
+          tauxHoraire: data.taux_horaire,
+          montantHorsTaxes: data.montant_total,
+          notes: data.notes,
+          tempsTotal: data.temps_total,
+          useQuartPredefini: false,
+          associerEmploye: false,
+        });
       };
 
       fetchData();
     }
-  }, [mode, props]);
+  }, [mode, props, form]);
 
   // Function to fetch employees from the database
   useEffect(() => {
