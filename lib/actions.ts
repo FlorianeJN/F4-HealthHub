@@ -243,14 +243,72 @@ export async function saveEnterpriseInfo(formData: FormData) {
   }
 }
 
+export async function updateShift(
+  shiftId: number,
+  data: z.infer<typeof formSchema>,
+  numFacture: string
+) {
+  "use server";
+  const {
+    date,
+    debutQuart,
+    finQuart,
+    pause,
+    tempsTotal,
+    prestation,
+    tauxHoraire,
+    montantHorsTaxes,
+    notes,
+  } = data;
+
+  // Conversion pour le bon nom de prestation
+  let prestationModifiee;
+  switch (prestation) {
+    case "soins_infirmiers":
+      prestationModifiee = "SOINS INFIRMIERS";
+      break;
+    case "inf_clinicien":
+      prestationModifiee = "INF CLINICIEN(NE)";
+      break;
+    case "inf_aux":
+      prestationModifiee = "INF AUXILIAIRE";
+      break;
+    default:
+      prestationModifiee = "PAB";
+  }
+
+  try {
+    await sql`
+    UPDATE quart 
+    SET 
+      date_quart = ${date}, 
+      debut_quart = ${debutQuart}, 
+      fin_quart = ${finQuart}, 
+      pause = ${pause}, 
+      temps_total = ${tempsTotal}, 
+      prestation = ${prestationModifiee}, 
+      taux_horaire = ${tauxHoraire}, 
+      montant_total = ${montantHorsTaxes}, 
+      notes = ${notes}
+    WHERE id = ${shiftId}
+  `;
+
+    console.log("Mise à jour complétée");
+
+    // Mettre à jour les chemins liés à la facture
+    revalidatePath(`/dashboard/invoices`);
+    revalidatePath(`/dashboard/invoices/${numFacture}`);
+  } catch (e) {
+    console.error("Erreur lors de la mise à jour du quart : ", e);
+  }
+}
+
 export async function addShift(
   data: z.infer<typeof formSchema>,
   numFacture: string
 ) {
   "use server";
 
-  console.log(" Données du quart :", data);
-  console.log("Numéro de facture :", numFacture);
   const {
     date,
     debutQuart,

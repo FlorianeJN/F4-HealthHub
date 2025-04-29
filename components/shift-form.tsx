@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
-import { addShift } from "@/lib/actions";
+import { addShift, updateShift } from "@/lib/actions";
 import { fetchEmployees, fetchShift } from "@/lib/data";
 import { Employee } from "@/lib/definitions";
 
@@ -121,7 +121,7 @@ export default function ShiftForm(props: ShiftFormProps) {
 
         form.reset({
           date: new Date(data.date_quart).toISOString().split("T")[0], // "2025-04-15"
-          prestation: prestation, // ex: "soins_infirmiers"
+          prestation: prestation,
           debutQuart: data.debut_quart.slice(0, 5),
           finQuart: data.fin_quart.slice(0, 5),
           pauseCheck: data.pause !== "00:00:00",
@@ -231,7 +231,7 @@ export default function ShiftForm(props: ShiftFormProps) {
 
     if (mode === "update") {
       const { shiftId } = props;
-      handleUpdateShift(shiftId);
+      handleUpdateShift(shiftId, data);
     } else {
       await handleAddShift(data);
     }
@@ -241,14 +241,20 @@ export default function ShiftForm(props: ShiftFormProps) {
   };
 
   async function handleAddShift(data: z.infer<typeof formSchema>) {
-    console.log("Add shift");
     await addShift(data, numFacture);
     toast.success("Quart ajouté avec succès!");
     form.reset();
   }
 
-  function handleUpdateShift(shiftId: number) {
+  async function handleUpdateShift(
+    shiftId: number,
+    data: z.infer<typeof formSchema>
+  ) {
     console.log(shiftId);
+
+    await updateShift(shiftId, data, numFacture);
+    toast.success("Quart mis à jour avec succès!");
+    form.reset();
   }
 
   return (

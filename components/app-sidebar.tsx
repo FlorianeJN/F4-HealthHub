@@ -1,6 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
-
 import {
   IconBriefcase,
   IconDashboard,
@@ -10,6 +8,7 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import * as React from "react";
+import { useEffect, useState } from "react";
 
 import { NavMain } from "@/components/nav-main";
 import {
@@ -45,7 +44,6 @@ const navItems = [
     url: "/dashboard/employees",
     icon: IconUsers,
   },
-
   {
     title: "Profil de l'entreprise",
     url: "/dashboard/profile",
@@ -68,26 +66,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5 "
+              className="data-[slot=sidebar-menu-button]:!p-2"
             >
-              <Link href="/">
-                <IconInnerShadowTop className="!size-5" />
-                <span className=" text-xl font-semibold">F4 HealthHub</span>
+              <Link href="/" className="flex items-center gap-2">
+                <IconInnerShadowTop className="size-6" />
+                <span className="text-2xl font-bold tracking-tight">
+                  F4 HealthHub
+                </span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
       <SidebarContent>
         <NavMain items={navItems} />
       </SidebarContent>
+
       <SidebarFooter>
-        <div className="flex flex-row gap-x-3">
+        <div className="flex items-center gap-3 p-2 rounded-md bg-muted">
           <UserButton />
           {isClient && user && (
             <div className="flex flex-col">
-              <p className="text-sm font-semibold">{user.fullName}</p>
-              <p className="text-xs text-slate-400">
+              <p className="text-sm font-medium leading-tight">
+                {user.fullName}
+              </p>
+              <p className="text-xs text-muted-foreground truncate max-w-[180px]">
                 {user.primaryEmailAddress?.emailAddress}
               </p>
             </div>
