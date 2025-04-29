@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 
 import {
   IconBriefcase,
@@ -54,6 +55,11 @@ const navItems = [
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useUser();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -76,14 +82,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={navItems} />
       </SidebarContent>
       <SidebarFooter>
-        <div className="flex flex-row  gap-x-3 ">
+        <div className="flex flex-row gap-x-3">
           <UserButton />
-          <div className="flex flex-col">
-            <p className="text-sm font-semibold">{user?.fullName}</p>
-            <p className="text-xs text-slate-400">
-              {user?.primaryEmailAddress?.emailAddress}
-            </p>
-          </div>
+          {isClient && user && (
+            <div className="flex flex-col">
+              <p className="text-sm font-semibold">{user.fullName}</p>
+              <p className="text-xs text-slate-400">
+                {user.primaryEmailAddress?.emailAddress}
+              </p>
+            </div>
+          )}
         </div>
       </SidebarFooter>
     </Sidebar>

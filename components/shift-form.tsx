@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 
 import { addShift } from "@/lib/actions";
-import { fetchEmployees } from "@/lib/data";
+import { fetchEmployees, fetchShift } from "@/lib/data";
 import { Employee } from "@/lib/definitions";
 
 import { DatePicker } from "./date-picker";
@@ -99,6 +99,19 @@ export default function ShiftForm(props: ShiftFormProps) {
   const tempsDemiWatcher = form.watch("tempsDemi");
   const tauxHoraireWatcher = form.watch("tauxHoraire");
   const tempsTotalWatcher = form.watch("tempsTotal");
+
+  //If the mode is update , we fetch the data to prepopulate the form
+  useEffect(() => {
+    if (mode === "update") {
+      const fetchData = async () => {
+        const { shiftId } = props;
+        const data = await fetchShift(shiftId);
+        console.log(data); //TODO : PREPOPULATE THE FORM USING THE DATA
+      };
+
+      fetchData();
+    }
+  }, [mode, props]);
 
   // Function to fetch employees from the database
   useEffect(() => {

@@ -40,6 +40,16 @@ export async function fetchEnterpriseInfo() {
   }
 }
 
+export async function fetchShift(shiftId: number) {
+  try {
+    const data = await sql<Shift[]>`SELECT * FROM quart WHERE id = ${shiftId} `;
+    return data;
+  } catch (e) {
+    console.log(e);
+    throw new Error("Error fetching shift #" + shiftId);
+  }
+}
+
 export async function fetchPartners() {
   try {
     const data = await sql<Partner[]>`SELECT * FROM partenaire`;
