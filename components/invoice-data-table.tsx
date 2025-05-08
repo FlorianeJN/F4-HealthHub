@@ -23,6 +23,9 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
+import React from "react";
+import Modal from "./modal";
+import { NewInvoiceForm } from "./new-invoice-form";
 
 interface InvoiceDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -46,16 +49,25 @@ export function InvoiceDataTable<TData extends Invoice, TValue>({
     },
   });
 
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  //TODO : AJOUTER MODAL NEW INVOICE
+
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button
-          className="gap-2 hover:cursor-pointer"
-          onClick={() => router.push("/dashboard/invoices/new")}
-        >
+        <Button className="gap-2 hover:cursor-pointer" onClick={openModal}>
           <IconPlus className="h-4 w-4" />
           Créer une nouvelle facture
         </Button>
+
+        {/* Modal for adding a new item */}
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
+          <NewInvoiceForm onClose={closeModal} />
+        </Modal>
       </div>
       <div className="rounded-md border">
         <Table>

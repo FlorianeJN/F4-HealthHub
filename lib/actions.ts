@@ -7,6 +7,68 @@ import { z } from "zod";
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
+export async function createNewInvoice({
+  partenaire,
+  mois,
+  annee,
+}: {
+  partenaire: string;
+  mois: string;
+  annee: string;
+}) {
+  "use server";
+
+  // 1) Valider et formater le mois en deux chiffres
+  const mmRaw = mois.trim();
+  if (!/^[0-9]{1,2}$/.test(mmRaw)) {
+    throw new Error(`Mois invalide: ${mois}`);
+  }
+  const monthNum = parseInt(mmRaw, 10);
+  if (monthNum < 1 || monthNum > 12) {
+    throw new Error(`Mois invalide: ${mois}`);
+  }
+  const mm = String(monthNum).padStart(2, "0");
+
+  // 2) Normaliser l'année
+  const yyyy = annee.trim();
+  if (!/^[0-9]{4}$/.test(yyyy)) {
+    throw new Error(`Année invalide: ${annee}`);
+  }
+
+  // 3) Construire la date au format SQL 'YYYY-MM-01'
+  const dateStr = `${yyyy}-${mm}-01`;
+
+  // 4) Récupérer la plus grande séquence existante
+  const [{ max_seq }] = await sql<{ max_seq: number }[]>`
+    SELECT COALESCE(
+      MAX(
+        CAST(split_part(num_facture, '-', 1) AS INTEGER)
+      ), 0
+    ) AS max_seq
+    FROM Facture
+  `;
+
+  // 5) Calculer la prochaine séquence
+  const nextSeq = max_seq + 1;
+  const newNumFacture = `${nextSeq}-${mm}-${yyyy}`;
+
+  // 6) Insertion de la nouvelle facture (montants = 0, statut "À compléter")
+  await sql`
+    INSERT INTO Facture
+      (num_facture, nom_partenaire, date,
+       montant_avant_taxes, tps, tvq,
+       montant_apres_taxes, statut)
+    VALUES
+      (${newNumFacture}, ${partenaire}, ${dateStr},
+       0, 0, 0, 0, 'À compléter')
+  `;
+
+  // 7) Revalidation de la route listant les factures
+  revalidatePath("/invoices");
+
+  return newNumFacture;
+}
+
 export async function addPartner(formData: FormData) {
   "use server";
 

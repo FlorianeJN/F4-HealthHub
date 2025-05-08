@@ -120,7 +120,9 @@ export const invoiceColumns: ColumnDef<Invoice>[] = [
     accessorKey: "montant_apres_taxes",
     header: "Montant total",
     cell: ({ row }) => {
-      return `${row.getValue("montant_apres_taxes")} $`;
+      const val = row.getValue<number | null>("montant_apres_taxes");
+      const display = val != null ? val : 0;
+      return `${display} $`;
     },
   },
   {

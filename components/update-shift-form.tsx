@@ -66,7 +66,7 @@ export default function UpdateShiftForm({
     console.log(data);
     console.log(shiftId);
     toast.success("Quart mis à jour avec succès!");
-    //onClose();
+    onClose();
   };
 
   return (
