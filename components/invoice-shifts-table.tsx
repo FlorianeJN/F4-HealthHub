@@ -25,8 +25,6 @@ interface InvoiceShiftsTableProps {
   shifts: Shift[];
 }
 
-//TODO : FAIRE UPDATE DE QUARTS
-
 export function InvoiceShiftsTable({ shifts }: InvoiceShiftsTableProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [shiftToDelete, setShiftToDelete] = useState<number | null>(null);
@@ -80,6 +78,11 @@ export function InvoiceShiftsTable({ shifts }: InvoiceShiftsTableProps) {
     setIsModalOpen(true);
   }
 
+  const sortedShifts = [...shifts].sort(
+    (a, b) =>
+      new Date(a.date_quart).getTime() - new Date(b.date_quart).getTime()
+  );
+
   return (
     <>
       <Modal isOpen={isModalOpen} onClose={closeModal}>
@@ -126,7 +129,7 @@ export function InvoiceShiftsTable({ shifts }: InvoiceShiftsTableProps) {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  shifts.map((shift) => (
+                  sortedShifts.map((shift) => (
                     <TableRow
                       key={shift.id}
                       onClick={() => handleUpdate(shift.id)}

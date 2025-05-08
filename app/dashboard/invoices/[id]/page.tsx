@@ -1,6 +1,7 @@
 import { InvoiceShiftsTable } from "@/components/invoice-shifts-table";
 import { InvoiceStats } from "@/components/invoice-stats";
-import { Badge } from "@/components/ui/badge";
+import StatusBadgeDropdown from "@/components/status-badge-dropdown";
+//import { Badge } from "@/components/ui/badge";
 import { fetchInvoice, fetchStatus } from "@/lib/data";
 import { formatDate } from "@/lib/utils";
 import { Metadata } from "next";
@@ -33,22 +34,7 @@ export default async function InvoiceDetailPage({
                 {formatDate(date.toISOString())}
               </p>
             </div>
-            <Badge
-              variant="default"
-              className={
-                status === "Payée"
-                  ? "bg-green-600 hover:bg-green-700"
-                  : status === "Envoyée"
-                  ? "bg-indigo-600 hover:bg-indigo-700"
-                  : status === "Prête"
-                  ? "bg-blue-500 hover:bg-blue-600"
-                  : status === "À compléter"
-                  ? "bg-red-500 hover:bg-red-600"
-                  : "bg-gray-500 hover:bg-gray-600"
-              }
-            >
-              {status}
-            </Badge>
+            <StatusBadgeDropdown currentStatus={status} />
           </div>
 
           <InvoiceStats num_facture={invoiceNumber} />

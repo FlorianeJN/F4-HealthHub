@@ -353,14 +353,33 @@ export async function deleteShift(id: number) {
 
   try {
     await sql`DELETE FROM quart WHERE id = ${id}`;
-
-    //Mettre a jour le montant de la facture
-
     revalidatePath("/dashboard/invoices");
     revalidatePath(`/dashboard/invoices/${id}`);
     return { success: true };
   } catch (e) {
     console.error("Erreur lors de la suppression du quart :", e);
     throw new Error("Database Error");
+  }
+}
+
+export async function updateStatus(newStatus: string, numFacture: string) {
+  "use server";
+
+  try {
+    await sql`
+      UPDATE facture
+      SET statut = ${newStatus}
+      WHERE num_facture = ${numFacture}
+    `;
+
+    // Revalidate cache for affected paths
+    revalidatePath("/dashboard/invoices");
+    revalidatePath(`/dashboard/invoices/${numFacture}`);
+  } catch (e) {
+    console.error(
+      "Erreur lors du changement de statut de la facture #" + numFacture,
+      e
+    );
+    throw new Error("Erreur changement statut facture");
   }
 }
