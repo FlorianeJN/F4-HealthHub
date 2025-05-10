@@ -9,6 +9,7 @@ interface InvoiceActionsProps {
 }
 
 export function InvoiceActions({ invoice }: InvoiceActionsProps) {
+  console.log(invoice);
   return (
     <div className="flex items-center gap-2">
       <Button
