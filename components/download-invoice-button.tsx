@@ -28,7 +28,7 @@ interface InvoiceAmounts {
   montant_apres_taxes: string;
 }
 
-interface DownloadInvoiceButtonProps {
+export interface DownloadInvoiceButtonProps {
   invoiceNumber: string;
   date: string;
   enterpriseInfo: EnterpriseInfo;
@@ -40,7 +40,7 @@ interface DownloadInvoiceButtonProps {
 const DownloadInvoiceButton: React.FC<DownloadInvoiceButtonProps> = (props) => {
   return (
     <button
-      className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow"
+      className="bg-blue-600 hover:bg-blue-700 hover:cursor-pointer text-white font-semibold py-2 px-4 rounded-xl shadow"
       onClick={() => generateInvoicePDF(props)}
     >
       Télécharger la facture (PDF)

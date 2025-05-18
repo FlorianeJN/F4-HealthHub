@@ -1,6 +1,5 @@
 "use client";
 
-import { InvoiceActions } from "@/components/invoice-actions";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Invoice } from "@/lib/definitions";
@@ -64,10 +63,6 @@ const columns: ColumnDef<Invoice>[] = [
         </Badge>
       );
     },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <InvoiceActions invoice={row.original} />,
   },
 ];
 
