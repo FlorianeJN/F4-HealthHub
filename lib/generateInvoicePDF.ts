@@ -67,30 +67,40 @@ export function generateInvoicePDF({
   doc.setFontSize(18);
   doc.text(`FACTURE N° ${invoiceNumber}`, 105, 25, { align: "center" });
 
+  const titleFontSize = 11;
+  const detailFontSize = 10;
+  const lineHeight = 6;
+
   // --- Company info (left) ---
-  let y = 50;
-  doc.setFontSize(10);
-  doc.text(enterpriseInfo.enterprise?.nom || "Entreprise", 15, y);
-  y += 5;
+  let y = 42;
+  doc.setFontSize(titleFontSize);
+  doc.setFont("helvetica", "bold");
+  y += lineHeight;
+
+  doc.setFontSize(detailFontSize);
+  doc.setFont("helvetica", "normal");
+  doc.text(enterpriseInfo.enterprise?.nom || "-", 15, y);
+  y += lineHeight;
+
   if (enterpriseInfo.address) {
     const { numero_civique, rue, ville, province, code_postal } =
       enterpriseInfo.address;
     doc.text(`${numero_civique || ""} ${rue || ""}`.trim(), 15, y);
-    y += 5;
+    y += lineHeight;
     doc.text(
       `${ville || ""}, ${province || ""} ${code_postal || ""}`.trim(),
       15,
       y
     );
-    y += 5;
+    y += lineHeight;
   }
   if (enterpriseInfo.enterprise?.telephone) {
-    doc.text(`Téléphone : ${enterpriseInfo.enterprise.telephone}`, 15, y);
-    y += 5;
+    doc.text(`Tél : ${enterpriseInfo.enterprise.telephone}`, 15, y);
+    y += lineHeight;
   }
   if (enterpriseInfo.enterprise?.courriel) {
     doc.text(`Email : ${enterpriseInfo.enterprise.courriel}`, 15, y);
-    y += 5;
+    y += lineHeight;
   }
 
   // --- Partner info label and box (right) ---
@@ -201,12 +211,11 @@ export function generateInvoicePDF({
   y += 7;
   doc.text("Montant TVQ (9,975%) :", 115, y);
   doc.text(amounts.tvq, 190, y, { align: "right" });
-  y += 10;
+  y += 7;
   doc.setFontSize(14);
-  doc.setTextColor(0, 102, 0);
+  doc.setFont("helvetica", "bold");
   doc.text("Montant TTC :", 115, y);
   doc.text(amounts.montant_apres_taxes, 190, y, { align: "right" });
-  doc.setTextColor(0, 0, 0);
 
   // --- Footer image on last page ---
   const enteteImg = document?.getElementById(
