@@ -177,6 +177,13 @@ export function generateInvoicePDF({
     doc.text(`${shift.montant_total || ""} $`, colX[7], y);
     y += 8;
     if (y > 230) {
+      // Add footer image before page break
+      const enteteImg = document?.getElementById(
+        "pdf-entete-img"
+      ) as HTMLImageElement | null;
+      if (enteteImg && enteteImg.src) {
+        doc.addImage(enteteImg.src, "PNG", 15, 275, 180, 15);
+      }
       doc.addPage();
       y = 20;
     }
@@ -186,39 +193,47 @@ export function generateInvoicePDF({
   y += 10;
   doc.setFontSize(12);
   doc.setTextColor(0, 0, 0);
-
-  // Montant total HT
-  doc.setFont("helvetica", "normal");
   doc.text("Montant total HT :", 115, y);
   doc.text(amounts.montant_avant_taxes, 190, y, { align: "right" });
-
   y += 7;
-  // Montant TPS
   doc.text("Montant TPS (5%) :", 115, y);
   doc.text(amounts.tps, 190, y, { align: "right" });
-
   y += 7;
-  // Montant TVQ
   doc.text("Montant TVQ (9,975%) :", 115, y);
   doc.text(amounts.tvq, 190, y, { align: "right" });
-
-  y += 7;
-  // Montant TTC en gras
+  y += 10;
   doc.setFontSize(14);
-  doc.setFont("helvetica", "bold");
+  doc.setTextColor(0, 102, 0);
   doc.text("Montant TTC :", 115, y);
   doc.text(amounts.montant_apres_taxes, 190, y, { align: "right" });
+  doc.setTextColor(0, 0, 0);
 
-  //revenir au style normal pour la suite
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "normal");
-
-  // --- Footer image ---
+  // --- Footer image on last page ---
   const enteteImg = document?.getElementById(
     "pdf-entete-img"
   ) as HTMLImageElement | null;
   if (enteteImg && enteteImg.src) {
     doc.addImage(enteteImg.src, "PNG", 15, 275, 180, 15);
+  }
+
+  // --- Page indicator and footer image on each page ---
+  const pageCount = doc.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+
+    // 1) On redessine d'abord l'image de pied de page
+    const enteteImg = document?.getElementById(
+      "pdf-entete-img"
+    ) as HTMLImageElement | null;
+    if (enteteImg && enteteImg.src) {
+      doc.addImage(enteteImg.src, "PNG", 15, 275, 180, 15);
+    }
+
+    // 2) Puis on imprime l'indicateur juste en dessous (y = 295)
+    doc.setFontSize(9);
+    doc.setTextColor(120);
+    doc.text(`Page ${i} sur ${pageCount}`, 200, 295, { align: "right" });
+    doc.setTextColor(0, 0, 0);
   }
 
   doc.save(`facture-${invoiceNumber}.pdf`);
