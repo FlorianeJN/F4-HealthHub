@@ -3,7 +3,7 @@
 import postgres from "postgres";
 import { Employee, Invoice, Partner, Shift } from "./definitions";
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
+export const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
 
 const formatter = new Intl.NumberFormat("fr-CA", {
   style: "currency",
@@ -362,5 +362,29 @@ export async function fetchAverageRate(num_facture: string) {
   } catch (error) {
     console.error(error);
     throw new Error("Error fetching average rate");
+  }
+}
+
+export async function fetchInvoiceRow(num_facture: string) {
+  try {
+    const data = await sql<
+      { nom_partenaire: string }[]
+    >`SELECT nom_partenaire FROM facture WHERE num_facture = ${num_facture}`;
+    return data[0];
+  } catch (e) {
+    console.error(e);
+    throw new Error("Database Error Fetching Invoice Row");
+  }
+}
+
+export async function fetchPartnerByName(nom: string) {
+  try {
+    const data = await sql<
+      Partner[]
+    >`SELECT * FROM partenaire WHERE nom = ${nom}`;
+    return data[0];
+  } catch (e) {
+    console.error(e);
+    throw new Error("Database Error Fetching Partner by Name");
   }
 }
