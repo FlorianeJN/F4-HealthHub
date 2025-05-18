@@ -47,94 +47,94 @@ interface GenerateInvoicePDFParams {
 
 export function generateInvoicePDF({
   invoiceNumber,
-  date,
   enterpriseInfo,
   partnerInfo,
   shifts,
   amounts,
 }: GenerateInvoicePDFParams) {
   const doc = new jsPDF();
-  let y = 15;
+  doc.setFont("helvetica", "normal");
 
   // --- Logo ---
-  // Load logo image from public/logo.PNG (must be base64 or URL for jsPDF)
-  // We'll use an <img> to get base64 if running in browser
   const logoImg = document?.getElementById(
     "pdf-logo-img"
   ) as HTMLImageElement | null;
   if (logoImg && logoImg.src) {
-    doc.addImage(logoImg.src, "PNG", 10, 10, 30, 30);
+    doc.addImage(logoImg.src, "PNG", 15, 15, 30, 30);
   }
-  y = 15;
 
-  // --- Titre centré ---
-  doc.setFontSize(16);
-  doc.text(`FACTURE N° ${invoiceNumber}`, 105, 20, { align: "center" });
-  doc.setFontSize(11);
-  doc.text(`Date : ${date}`, 105, 27, { align: "center" });
+  // --- Title and date ---
+  doc.setFontSize(18);
+  doc.text(`FACTURE N° ${invoiceNumber}`, 105, 25, { align: "center" });
 
-  // --- Infos entreprise à gauche sous le logo ---
-  let leftY = 45;
+  // --- Company info (left) ---
+  let y = 50;
   doc.setFontSize(10);
-  doc.text(enterpriseInfo.enterprise?.nom || "Entreprise", 10, leftY);
-  leftY += 5;
+  doc.text(enterpriseInfo.enterprise?.nom || "Entreprise", 15, y);
+  y += 5;
   if (enterpriseInfo.address) {
     const { numero_civique, rue, ville, province, code_postal } =
       enterpriseInfo.address;
-    doc.text(`${numero_civique || ""} ${rue || ""}`.trim(), 10, leftY);
-    leftY += 5;
+    doc.text(`${numero_civique || ""} ${rue || ""}`.trim(), 15, y);
+    y += 5;
     doc.text(
       `${ville || ""}, ${province || ""} ${code_postal || ""}`.trim(),
-      10,
-      leftY
+      15,
+      y
     );
-    leftY += 5;
+    y += 5;
   }
   if (enterpriseInfo.enterprise?.telephone) {
-    doc.text(`Téléphone : ${enterpriseInfo.enterprise.telephone}`, 10, leftY);
-    leftY += 5;
+    doc.text(`Téléphone : ${enterpriseInfo.enterprise.telephone}`, 15, y);
+    y += 5;
   }
   if (enterpriseInfo.enterprise?.courriel) {
-    doc.text(`Email : ${enterpriseInfo.enterprise.courriel}`, 10, leftY);
-    leftY += 5;
+    doc.text(`Email : ${enterpriseInfo.enterprise.courriel}`, 15, y);
+    y += 5;
   }
 
-  // --- Encadré infos partenaire à droite ---
-  doc.text("Facturé à", 115, 30);
-  const boxX = 120,
-    boxY = 35,
-    boxW = 80,
-    boxH = 25;
-  doc.setDrawColor(0);
-  doc.rect(boxX, boxY, boxW, boxH);
-  let boxTextY = boxY + 6;
+  // --- Partner info label and box (right) ---
+  const boxX = 130,
+    boxY = 45,
+    boxW = 70,
+    boxH = 36;
   doc.setFontSize(11);
-  doc.text(partnerInfo.nom, boxX + 2, boxTextY);
-  boxTextY += 5;
+  const labelY = boxY - 4;
+  doc.text("Facturé à :", boxX, labelY, { align: "left" });
+  doc.setDrawColor(120);
+  doc.setLineWidth(0.5);
+  doc.rect(boxX, boxY, boxW, boxH, "S");
+  let boxTextY = boxY + 10;
+  const boxTextX = boxX + 6;
+  doc.text(partnerInfo.nom, boxTextX, boxTextY, { align: "left" });
+  boxTextY += 6;
   if (partnerInfo.rue || partnerInfo.numero_civique) {
     doc.text(
       `${partnerInfo.numero_civique || ""} ${partnerInfo.rue || ""}`.trim(),
-      boxX + 2,
-      boxTextY
+      boxTextX,
+      boxTextY,
+      { align: "left" }
     );
-    boxTextY += 5;
+    boxTextY += 6;
   }
   doc.text(
-    `${partnerInfo.ville || ""}, ${partnerInfo.province || ""} ${
-      partnerInfo.code_postal || ""
-    }`.trim(),
-    boxX + 2,
-    boxTextY
+    `${partnerInfo.ville || ""}, ${partnerInfo.province || ""}`.trim(),
+    boxTextX,
+    boxTextY,
+    { align: "left" }
   );
-  boxTextY += 5;
+  boxTextY += 6;
   if (partnerInfo.telephone) {
-    doc.text(`Téléphone : ${partnerInfo.telephone}`, boxX + 2, boxTextY);
-    boxTextY += 5;
+    doc.text(`Téléphone : ${partnerInfo.telephone}`, boxTextX, boxTextY, {
+      align: "left",
+    });
+    boxTextY += 6;
   }
 
-  // --- Tableau des quarts (reprendre ton code existant ici) ---
-  y = 80;
-  // --- En-têtes du tableau ---
+  // --- Table header with background ---
+  y = 90;
+  doc.setFillColor(230, 230, 230);
+  doc.rect(15, y, 180, 8, "F");
   doc.setFontSize(10);
   const headers = [
     "Date",
@@ -146,17 +146,17 @@ export function generateInvoicePDF({
     "Taux",
     "Montant HT",
   ];
-  const colX = [10, 35, 80, 100, 115, 130, 150, 175];
-  headers.forEach((h, i) => doc.text(h, colX[i], y));
-  y += 3;
-  doc.setDrawColor(200);
-  doc.setLineWidth(0.1);
-  doc.line(10, y, 200, y);
-  y += 4;
+  const colX = [15, 40, 80, 100, 115, 130, 150, 175];
+  headers.forEach((h, i) => doc.text(h, colX[i], y + 6));
+  y += 12;
 
-  // --- Données du tableau ---
+  // --- Table rows ---
   const formatTime = (t: string) => (t && t.length >= 5 ? t.slice(0, 5) : t);
-  shifts.forEach((shift) => {
+  shifts.forEach((shift, idx) => {
+    if (idx % 2 === 1) {
+      doc.setFillColor(245, 245, 245);
+      doc.rect(15, y - 6, 180, 8, "F");
+    }
     let dateStr = shift.date_quart;
     if (typeof dateStr !== "string") {
       try {
@@ -165,7 +165,6 @@ export function generateInvoicePDF({
         dateStr = String(dateStr);
       }
     }
-
     doc.text(dateStr || "", colX[0], y);
     doc.text(shift.prestation || "", colX[1], y, {
       maxWidth: colX[2] - colX[1] - 2,
@@ -176,54 +175,50 @@ export function generateInvoicePDF({
     doc.text(shift.temps_total || "", colX[5], y);
     doc.text(`${shift.taux_horaire || ""} $`, colX[6], y);
     doc.text(`${shift.montant_total || ""} $`, colX[7], y);
-
-    doc.setDrawColor(230);
-    doc.line(10, y + 1.5, 200, y + 1.5);
-    y += 6;
-
-    if (y > 250) {
+    y += 8;
+    if (y > 230) {
       doc.addPage();
-      y = 15;
+      y = 20;
     }
   });
 
-  // --- Totaux ---
-  y += 8;
-  doc.setDrawColor(180);
-  doc.line(10, y, 200, y);
-  y += 7;
-
-  y += 7;
-
+  // --- Totals section (no box) ---
+  y += 10;
   doc.setFontSize(12);
-  doc.text("Montant total HT :", 120, y);
-  doc.text(amounts.montant_avant_taxes, 200, y, { align: "right" });
-  y += 6;
-
-  doc.text("Montant TPS (5%) :", 120, y);
-  doc.text(amounts.tps, 200, y, { align: "right" });
-  y += 6;
-
-  doc.text("Montant TVQ (9,975%) :", 120, y);
-  doc.text(amounts.tvq, 200, y, { align: "right" });
-  y += 6;
-
-  doc.setFontSize(13);
-  doc.setDrawColor(220);
-  doc.setFillColor(245, 245, 245);
-  doc.rect(115, y - 4, 80, 10, "F");
-  doc.setTextColor(0, 102, 0);
-  doc.text("Montant TTC :", 120, y + 3);
-  doc.text(amounts.montant_apres_taxes, 200, y + 3, { align: "right" });
   doc.setTextColor(0, 0, 0);
 
-  // --- Image entete en bas de page ---
-  // Load entete image from public/ENTETE.PNG
+  // Montant total HT
+  doc.setFont("helvetica", "normal");
+  doc.text("Montant total HT :", 115, y);
+  doc.text(amounts.montant_avant_taxes, 190, y, { align: "right" });
+
+  y += 7;
+  // Montant TPS
+  doc.text("Montant TPS (5%) :", 115, y);
+  doc.text(amounts.tps, 190, y, { align: "right" });
+
+  y += 7;
+  // Montant TVQ
+  doc.text("Montant TVQ (9,975%) :", 115, y);
+  doc.text(amounts.tvq, 190, y, { align: "right" });
+
+  y += 7;
+  // Montant TTC en gras
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Montant TTC :", 115, y);
+  doc.text(amounts.montant_apres_taxes, 190, y, { align: "right" });
+
+  //revenir au style normal pour la suite
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+
+  // --- Footer image ---
   const enteteImg = document?.getElementById(
     "pdf-entete-img"
   ) as HTMLImageElement | null;
   if (enteteImg && enteteImg.src) {
-    doc.addImage(enteteImg.src, "PNG", 10, 270, 190, 20);
+    doc.addImage(enteteImg.src, "PNG", 15, 275, 180, 15);
   }
 
   doc.save(`facture-${invoiceNumber}.pdf`);
