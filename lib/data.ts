@@ -237,7 +237,29 @@ export async function fetchTotalPendingAmounts() {
   }
 }
 
-export async function fetchInvoiceAmounts(num_facture: string) {
+export async function fetchPartnerEmailFromInvoiceNumber(numFacture: string) {
+  try {
+    const result = await sql`
+      SELECT p.courriel
+      FROM facture f
+      JOIN partenaire p ON f.nom_partenaire = p.nom
+      WHERE f.num_facture = ${numFacture}
+    `;
+
+    if (result.length === 0) {
+      console.log("Aucun courriel trouvé pour ce numéro de facture.");
+      return null;
+    }
+
+    console.log("Email du partenaire :", result[0].courriel);
+    return result[0].courriel;
+  } catch (error) {
+    console.error("Erreur lors de la récupération du courriel :", error);
+    throw error;
+  }
+}
+
+export async function fetchInvoiceAmounts(numFacture: string) {
   try {
     const data = await sql<
       {
@@ -253,7 +275,7 @@ export async function fetchInvoiceAmounts(num_facture: string) {
       tps,
       tvq
     FROM facture 
-    WHERE num_facture = ${num_facture} 
+    WHERE num_facture = ${numFacture} 
   `;
 
     const row = data[0];

@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     const filename = attachment.originalFilename || "attachment";
     const mailOptions = {
       from: process.env.GMAIL_ADDRESS,
-      to: "floriane.jnikebie@gmail.com",
+      to: fields.to,
       subject: Array.isArray(fields.title)
         ? fields.title[0]
         : fields.title || "Facture",

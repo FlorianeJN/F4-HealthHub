@@ -14,6 +14,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { fetchPartnerEmailFromInvoiceNumber } from "@/lib/data";
 import { Shift } from "@/lib/definitions";
 import { generateInvoicePDFBlob, PartnerInfo } from "@/lib/generateInvoicePDF";
 import { Check, Loader2 } from "lucide-react";
@@ -66,7 +67,8 @@ Merci de votre confiance.
 
 L’équipe F4 Santé inc.
 Tél. : 514-797-6357
-Email : f4sante@gmail.com`;
+Email : f4sante@gmail.com
+Site web : https://www.f4santeinc.com `;
   }
 
   const form = useForm<FormValues>({
@@ -95,14 +97,11 @@ Email : f4sante@gmail.com`;
     });
   };
 
-  // Replace this placeholder with your actual email logic
   async function sendEmail(formData: FormData) {
-    // TODO: Add real email sending logic (API call etc.)
-
-    console.log("Sending email with", Object.fromEntries(formData.entries()));
-
     const title = formData.get("title") as string;
     const content = formData.get("content") as string;
+    const partnerEmail =
+      await fetchPartnerEmailFromInvoiceNumber(invoiceNumber);
 
     const pdfBuffer = generateInvoicePDFBlob({
       invoiceNumber: invoiceNumber,
@@ -121,6 +120,7 @@ Email : f4sante@gmail.com`;
       new Blob([pdfBuffer], { type: "application/pdf" }),
       `facture-${invoiceNumber}.pdf`
     );
+    data.append("to", partnerEmail);
 
     const res = await fetch("/api/send-email", {
       method: "POST",
