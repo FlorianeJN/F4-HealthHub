@@ -23,7 +23,7 @@ export function LandingHeader() {
         <div className="hidden md:flex items-center space-x-2">
           {isSignedIn ? (
             <Link href="/dashboard">
-              <button className="inline-flex items-center justify-center rounded-md bg-[#396CFF] px-4 py-2 text-sm font-medium text-white hover:bg-[#2F5FE0]">
+              <button className="inline-flex items-center justify-center rounded-md bg-[#396CFF] px-4 py-2 text-sm font-medium text-white hover:bg-[#2F5FE0] hover:cursor-pointer">
                 Accéder à l&apos;application
               </button>
             </Link>
