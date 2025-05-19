@@ -1,9 +1,51 @@
 import { LandingHeader } from "@/components/ui/landing-header";
 import SignUp from "@/components/ui/sign-up";
-import { BarChart3, Calendar, Shield, Users } from "lucide-react";
+import { BarChart3, Calendar, Check, Shield, Users } from "lucide-react";
 import Image from "next/image";
+import React from "react";
 
 export default function LandingPage() {
+  const featureColorClasses = {
+    emerald: "bg-emerald-100 text-emerald-600",
+    blue: "bg-blue-100 text-blue-600",
+    purple: "bg-purple-100 text-purple-600",
+    amber: "bg-amber-100 text-amber-600",
+  };
+
+  type FeatureColor = "emerald" | "blue" | "purple" | "amber";
+
+  const features: {
+    icon: React.ComponentType<{ className?: string }>;
+    title: string;
+    desc: string;
+    color: FeatureColor;
+  }[] = [
+    {
+      icon: BarChart3,
+      title: "Analyse avancée",
+      desc: "Suivez vos revenus, quarts de travail, partenaires et employés avec des tableaux de bord en temps réel.",
+      color: "emerald",
+    },
+    {
+      icon: Users,
+      title: "Gestion des talents",
+      desc: "Gérez facilement vos professionnels de santé et leurs affectations.",
+      color: "blue",
+    },
+    {
+      icon: Calendar,
+      title: "Planification",
+      desc: "Optimisez les horaires et les affectations avec notre calendrier intelligent.",
+      color: "purple",
+    },
+    {
+      icon: Shield,
+      title: "Conformité",
+      desc: "Assurez-vous que tous vos placements respectent les réglementations en vigueur.",
+      color: "amber",
+    },
+  ];
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <LandingHeader />
@@ -15,7 +57,7 @@ export default function LandingPage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,124,245,0.15),transparent_50%)]"></div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(57,108,255,0.1),transparent_50%)]"></div>
           <div className="container mx-auto px-4 relative">
-            <div className="grid lg:grid-cols-2 gap-6 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
               <div className="text-center lg:text-left">
                 <div className="flex items-center justify-center lg:justify-start gap-3 mb-3">
                   <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
@@ -29,100 +71,21 @@ export default function LandingPage() {
                   Simplifiez votre gestion, optimisez vos placements et
                   augmentez votre rentabilité avec notre plateforme
                 </p>
-
-                <div className="grid grid-cols-2 gap-4 mb-5">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-[#637CF5]/10 flex items-center justify-center">
-                      <svg
-                        className="w-4 h-4 text-[#637CF5]"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                  {[
+                    "Gestion simplifiée",
+                    "Suivi en temps réel",
+                    "Planification optimisée",
+                    "Rapports détaillés",
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-[#637CF5]/10 flex items-center justify-center">
+                        <Check className="w-4 h-4 text-[#637CF5]" />
+                      </div>
+                      <span className="text-slate-700 font-medium">{item}</span>
                     </div>
-                    <span className="text-slate-700 font-medium">
-                      Gestion simplifiée
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-[#637CF5]/10 flex items-center justify-center">
-                      <svg
-                        className="w-4 h-4 text-[#637CF5]"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </div>
-                    <span className="text-slate-700 font-medium">
-                      Suivi en temps réel
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-[#637CF5]/10 flex items-center justify-center">
-                      <svg
-                        className="w-4 h-4 text-[#637CF5]"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </div>
-                    <span className="text-slate-700 font-medium">
-                      Planification optimisée
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-[#637CF5]/10 flex items-center justify-center">
-                      <svg
-                        className="w-4 h-4 text-[#637CF5]"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </div>
-                    <span className="text-slate-700 font-medium">
-                      Rapports détaillés
-                    </span>
-                  </div>
+                  ))}
                 </div>
-
-                <div className="flex justify-center lg:justify-start">
-                  <SignUp
-                    className="bg-[#396CFF] hover:bg-[#2F5FE0] text-white rounded-full px-6 py-3 text-base font-medium shadow-lg hover:shadow-xl transition-all duration-300"
-                    label="Commencer maintenant"
-                  />
-                </div>
-
-                <p className="mt-4 text-sm text-slate-500">
-                  Déjà utilisé par plus de 50 agences de placement en santé
-                </p>
               </div>
               <div className="relative mt-6 lg:mt-0">
                 <div className="relative rounded-xl overflow-hidden shadow-2xl border border-slate-200 bg-white">
@@ -135,31 +98,17 @@ export default function LandingPage() {
                     className="w-full h-auto"
                   />
                 </div>
-                <div className="absolute -bottom-4 -right-4 bg-white p-3 rounded-lg shadow-lg border border-slate-200 hidden sm:block">
-                  <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 rounded-full bg-[#637CF5]/10 flex items-center justify-center">
-                      <svg
-                        className="w-5 h-5 text-[#637CF5]"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-slate-900">
-                        Satisfaction client
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        100% des utilisateurs satisfaits
-                      </p>
-                    </div>
+                <div className="absolute -bottom-4 -right-4 bg-white p-3 rounded-lg shadow-lg border border-slate-200 hidden sm:flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-full bg-[#637CF5]/10 flex items-center justify-center">
+                    <Check className="w-5 h-5 text-[#637CF5]" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-900">
+                      Satisfaction client
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      100% des utilisateurs satisfaits
+                    </p>
                   </div>
                 </div>
               </div>
@@ -183,55 +132,25 @@ export default function LandingPage() {
                 agence de placement.
               </p>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-              <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 hover:border-indigo-200 group">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-emerald-100 rounded-full flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300">
-                  <BarChart3 className="h-6 w-6 sm:h-7 sm:w-7 text-emerald-600" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+              {features.map((feat, i) => (
+                <div
+                  key={i}
+                  className="bg-white p-5 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 hover:border-indigo-200 group"
+                >
+                  <div
+                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300 ${featureColorClasses[feat.color]}`}
+                  >
+                    {React.createElement(feat.icon, {
+                      className: "h-6 w-6 sm:h-7 sm:w-7",
+                    })}
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-semibold mb-2 text-slate-900">
+                    {feat.title}
+                  </h3>
+                  <p className="text-slate-600 leading-relaxed">{feat.desc}</p>
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-slate-900">
-                  Analyse avancée
-                </h3>
-                <p className="text-slate-600 leading-relaxed">
-                  Suivez vos revenus, quarts de travail, partenaires et employés
-                  avec des tableaux de bord en temps réel.
-                </p>
-              </div>
-              <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 hover:border-indigo-200 group">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-100 rounded-full flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300">
-                  <Users className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600" />
-                </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-slate-900">
-                  Gestion des talents
-                </h3>
-                <p className="text-slate-600 leading-relaxed">
-                  Gérez facilement vos professionnels de santé et leurs
-                  affectations.
-                </p>
-              </div>
-              <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 hover:border-indigo-200 group">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-purple-100 rounded-full flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300">
-                  <Calendar className="h-6 w-6 sm:h-7 sm:w-7 text-purple-600" />
-                </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-slate-900">
-                  Planification
-                </h3>
-                <p className="text-slate-600 leading-relaxed">
-                  Optimisez les horaires et les affectations avec notre
-                  calendrier intelligent.
-                </p>
-              </div>
-              <div className="bg-white p-5 sm:p-6 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 hover:border-indigo-200 group">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-amber-100 rounded-full flex items-center justify-center mb-4 sm:mb-5 group-hover:scale-110 transition-transform duration-300">
-                  <Shield className="h-6 w-6 sm:h-7 sm:w-7 text-amber-600" />
-                </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-slate-900">
-                  Conformité
-                </h3>
-                <p className="text-slate-600 leading-relaxed">
-                  Assurez-vous que tous vos placements respectent les
-                  réglementations en vigueur.
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </section>
@@ -240,7 +159,7 @@ export default function LandingPage() {
         <section className="py-12 sm:py-16 bg-slate-50 relative">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(99,124,245,0.1),transparent_50%)]"></div>
           <div className="container mx-auto px-4 relative">
-            <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
               <div className="order-2 lg:order-1">
                 <div className="relative rounded-xl overflow-hidden shadow-2xl border border-slate-200 bg-white">
                   <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl opacity-20 blur-xl -z-10"></div>
@@ -266,66 +185,18 @@ export default function LandingPage() {
                   décisions éclairées basées sur des données précises et à jour.
                 </p>
                 <ul className="space-y-2 sm:space-y-3">
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center mt-0.5">
-                      <svg
-                        className="h-4 w-4 text-indigo-600"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </div>
-                    <span className="ml-3 text-slate-700">
-                      Suivi des revenus et des dépenses
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center mt-0.5">
-                      <svg
-                        className="h-4 w-4 text-indigo-600"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </div>
-                    <span className="ml-3 text-slate-700">
-                      Gestion des quarts de travail
-                    </span>
-                  </li>
-                  <li className="flex items-start">
-                    <div className="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center mt-0.5">
-                      <svg
-                        className="h-4 w-4 text-indigo-600"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </div>
-                    <span className="ml-3 text-slate-700">
-                      Analyse des performances des partenaires
-                    </span>
-                  </li>
+                  {[
+                    "Suivi des revenus et des dépenses",
+                    "Gestion des quarts des travaux",
+                    "Analyse des performances des partenaires",
+                  ].map((li, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <div className="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center mt-0.5">
+                        <Check className="h-4 w-4 text-indigo-600" />
+                      </div>
+                      <span className="ml-3 text-slate-700">{li}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
