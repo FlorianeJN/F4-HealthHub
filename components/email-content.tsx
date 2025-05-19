@@ -144,7 +144,7 @@ Site web : https://www.f4santeinc.com `;
         <button
           type="button"
           onClick={onClose}
-          className="text-muted-foreground hover:text-foreground text-3xl font-bold"
+          className="text-muted-foreground hover:cursor-pointer hover:text-foreground text-3xl font-bold"
         >
           &times;
         </button>

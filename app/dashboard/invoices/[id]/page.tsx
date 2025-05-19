@@ -55,8 +55,9 @@ export default async function InvoiceDetailPage({
 
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col gap-2">
-          <div className="flex flex-col gap-6 py-4 px-4 md:gap-8 md:py-6 lg:px-6">
-            <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-6 py-4 px-4 sm:px-6 md:gap-8 md:py-6 lg:px-8">
+            {/* Header: Title + Status */}
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-2xl font-bold">Facture {invoiceNumber}</h1>
                 <p className="text-muted-foreground mt-1">
@@ -66,7 +67,8 @@ export default async function InvoiceDetailPage({
               <StatusBadgeDropdown currentStatus={status} />
             </div>
 
-            <div className="flex justify-end mb-2">
+            {/* Buttons */}
+            <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:justify-end">
               <SendEmailAction
                 invoiceNumber={invoiceNumber}
                 date={date.toLocaleDateString("fr-CA")}
@@ -87,7 +89,6 @@ export default async function InvoiceDetailPage({
                 shifts={shifts}
                 amounts={amounts}
               />
-              <span className="w-3.5"> </span>
               <DownloadInvoiceButton
                 invoiceNumber={invoiceNumber}
                 date={date.toLocaleDateString("fr-CA")}
@@ -110,8 +111,8 @@ export default async function InvoiceDetailPage({
               />
             </div>
 
+            {/* Stats + Table */}
             <InvoiceStats num_facture={invoiceNumber} />
-
             <InvoiceShiftsTable shifts={shifts} />
           </div>
         </div>

@@ -8,6 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -22,9 +23,13 @@ export function NavMain({
 }) {
   const pathName = usePathname();
   const router = useRouter();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   function handleClick(url: string) {
     router.push(url);
+    if (isMobile) {
+      setOpenMobile(false);
+    }
   }
 
   return (

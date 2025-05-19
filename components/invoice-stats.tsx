@@ -10,9 +10,8 @@ export async function InvoiceStats({ num_facture }: { num_facture: string }) {
   const { montant_apres_taxes, montant_avant_taxes, tvq, tps } =
     await fetchInvoiceAmounts(num_facture);
 
-  const { total: totalQuarts, byPrestation } = await fetchNumberOfShifts(
-    num_facture
-  );
+  const { total: totalQuarts, byPrestation } =
+    await fetchNumberOfShifts(num_facture);
 
   const { total: totalHours, byPrestation: byPrestationHours } =
     await fetchTotalHours(num_facture);
@@ -20,7 +19,7 @@ export async function InvoiceStats({ num_facture }: { num_facture: string }) {
   const tauxHoraireMoyen = await fetchAverageRate(num_facture);
 
   return (
-    <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:grid-cols-2 @xl/main:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 p-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card *:data-[slot=card]:shadow-xs">
       <Tuile
         title="Montant total de la facture"
         value={montant_apres_taxes}
