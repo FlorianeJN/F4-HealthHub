@@ -1,4 +1,6 @@
 import DownloadInvoiceButton from "@/components/download-invoice-button";
+import SendEmailAction from "@/components/email-modal";
+
 import { InvoiceShiftsTable } from "@/components/invoice-shifts-table";
 import { InvoiceStats } from "@/components/invoice-stats";
 import PDFImagesPreload from "@/components/PDFImagesPreload";
@@ -50,6 +52,7 @@ export default async function InvoiceDetailPage({
   return (
     <>
       <PDFImagesPreload />
+
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col gap-2">
           <div className="flex flex-col gap-6 py-4 px-4 md:gap-8 md:py-6 lg:px-6">
@@ -64,6 +67,8 @@ export default async function InvoiceDetailPage({
             </div>
 
             <div className="flex justify-end mb-2">
+              <SendEmailAction />
+              <span className="w-3.5"> </span>
               <DownloadInvoiceButton
                 invoiceNumber={invoiceNumber}
                 date={date.toLocaleDateString("fr-CA")}

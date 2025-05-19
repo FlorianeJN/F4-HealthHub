@@ -3,6 +3,7 @@
 import { Shift } from "@/lib/definitions";
 import { generateInvoicePDF, PartnerInfo } from "@/lib/generateInvoicePDF";
 import React from "react";
+import { Button } from "./ui/button";
 
 interface EnterpriseInfo {
   enterprise: {
@@ -39,12 +40,14 @@ export interface DownloadInvoiceButtonProps {
 
 const DownloadInvoiceButton: React.FC<DownloadInvoiceButtonProps> = (props) => {
   return (
-    <button
-      className="bg-blue-600 hover:bg-blue-700 hover:cursor-pointer text-white font-semibold py-2 px-4 rounded-xl shadow"
+    <Button
+      size="lg"
+      variant="outline"
+      className="hover:cursor-pointer"
       onClick={() => generateInvoicePDF(props)}
     >
       Télécharger la facture (PDF)
-    </button>
+    </Button>
   );
 };
 
