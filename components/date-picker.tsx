@@ -10,7 +10,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { fr } from "date-fns/locale";
 
 type DatePickerProps = {
   value?: string;
@@ -43,7 +42,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {selectedDate ? (
-            format(selectedDate, "PPP", { locale: fr })
+            format(selectedDate, "PPP")
           ) : (
             <span>Sélectionnez une date</span>
           )}
@@ -54,7 +53,6 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
           mode="single"
           selected={selectedDate}
           onSelect={handleOnSelect}
-          locale={fr}
         />
       </PopoverContent>
     </Popover>
