@@ -66,7 +66,7 @@ export function LandingHeader() {
             <Link href="/dashboard">
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="w-full rounded-md bg-[#396CFF] px-4 py-2 text-sm font-medium text-white hover:cursor-pointer hover:bg-[#2F5FE0]"
+                className="w-full rounded-md bg-[#396CFF] px-4 py-2 text-sm font-medium text-white hover:cursor-pointer hover:bg-[#2F5FE0] "
               >
                 Accéder à l&apos;application
               </button>
