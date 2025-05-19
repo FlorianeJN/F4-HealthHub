@@ -7,6 +7,36 @@ module.exports = {
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
   ],
+  safelist: [
+    // Day picker modifiers
+    "day-range-start",
+    "day-range-end",
+    "day-range-middle",
+    "day-outside",
+    "day-disabled",
+    "day-hidden",
+
+    // aria-selected variants
+    "aria-selected:bg-primary",
+    "aria-selected:text-primary-foreground",
+    "aria-selected:bg-accent",
+    "aria-selected:text-accent-foreground",
+    "aria-selected:opacity-100",
+    "aria-selected:text-muted-foreground",
+
+    // Common sizes and utility classes
+    "size-7",
+    "size-8",
+    "text-muted-foreground",
+    "bg-primary",
+    "text-primary-foreground",
+    "bg-accent",
+    "text-accent-foreground",
+    "hover:bg-primary",
+    "hover:text-primary-foreground",
+    "focus:bg-primary",
+    "focus:text-primary-foreground",
+  ],
   theme: {
     container: {
       center: true,
