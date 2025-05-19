@@ -67,7 +67,26 @@ export default async function InvoiceDetailPage({
             </div>
 
             <div className="flex justify-end mb-2">
-              <SendEmailAction />
+              <SendEmailAction
+                invoiceNumber={invoiceNumber}
+                date={date.toLocaleDateString("fr-CA")}
+                enterpriseInfo={{
+                  enterprise:
+                    enterpriseInfo.enterprise &&
+                    "nom" in enterpriseInfo.enterprise
+                      ? (enterpriseInfo.enterprise as {
+                          nom: string;
+                          telephone?: string;
+                          courriel?: string;
+                          [key: string]: unknown;
+                        })
+                      : { nom: "Nom Entreprise inconnu" },
+                  address: enterpriseInfo.address,
+                }}
+                partnerInfo={partnerInfo}
+                shifts={shifts}
+                amounts={amounts}
+              />
               <span className="w-3.5"> </span>
               <DownloadInvoiceButton
                 invoiceNumber={invoiceNumber}

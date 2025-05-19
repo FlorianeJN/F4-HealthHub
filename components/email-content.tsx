@@ -14,11 +14,20 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { Shift } from "@/lib/definitions";
+import { generateInvoicePDFBlob, PartnerInfo } from "@/lib/generateInvoicePDF";
 import { Check, Loader2 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { toast } from "react-toastify";
+import { EnterpriseInfo, InvoiceAmounts } from "./download-invoice-button";
 
 type EmailContentProps = {
   onClose: () => void;
+  invoiceNumber: string;
+  date: string;
+  enterpriseInfo: EnterpriseInfo;
+  partnerInfo: PartnerInfo;
+  shifts: Shift[];
+  amounts: InvoiceAmounts;
 };
 
 const formSchema = z.object({
@@ -28,43 +37,103 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function EmailContent({ onClose }: EmailContentProps) {
-  const numFacture = usePathname().split("/").pop();
+export default function EmailContent({
+  onClose,
+  invoiceNumber,
+  date,
+  enterpriseInfo,
+  partnerInfo,
+  shifts,
+  amounts,
+}: EmailContentProps) {
+  //  const numFacture = usePathname().split("/").pop();
+
+  // Génère la date du jour en français, ex. "19 mai 2025"
+  const today = new Date().toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   function generateContent(invoiceNumber: string | undefined) {
     if (!invoiceNumber) return;
+
     return `Bonjour,
 
-Veuillez trouver ci-joint la facture n°${invoiceNumber} émise le 22 Nov.
+Veuillez trouver ci-joint la facture n° ${invoiceNumber}, émise le ${today}.
 
-Merci de votre confiance,
-Cordialement,
-Votre société`;
+Merci de votre confiance.
+
+L’équipe F4 Santé inc.
+Tél. : 514-797-6357
+Email : f4sante@gmail.com`;
   }
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: `Facture #${numFacture}`,
-      content: generateContent(numFacture),
+      title: `Facture #${invoiceNumber}`,
+      content: generateContent(invoiceNumber),
     },
   });
 
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (data: FormValues) => {
+  const handleSubmit = (data: FormValues, event?: React.BaseSyntheticEvent) => {
+    event?.preventDefault(); // ✅ prevent full page reload
     setSuccess(false);
+
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("content", data.content);
 
     startTransition(async () => {
-      //  await sendEmail(formData);
+      await sendEmail(formData);
       setSuccess(true);
       setTimeout(() => onClose(), 2000);
     });
   };
+
+  // Replace this placeholder with your actual email logic
+  async function sendEmail(formData: FormData) {
+    // TODO: Add real email sending logic (API call etc.)
+
+    console.log("Sending email with", Object.fromEntries(formData.entries()));
+
+    const title = formData.get("title") as string;
+    const content = formData.get("content") as string;
+
+    const pdfBuffer = generateInvoicePDFBlob({
+      invoiceNumber: invoiceNumber,
+      amounts: amounts,
+      date: date,
+      enterpriseInfo: enterpriseInfo,
+      partnerInfo: partnerInfo,
+      shifts: shifts,
+    });
+
+    const data = new FormData();
+    data.append("content", content);
+    data.append("title", title);
+    data.append(
+      "attachment",
+      new Blob([pdfBuffer], { type: "application/pdf" }),
+      `facture-${invoiceNumber}.pdf`
+    );
+
+    const res = await fetch("/api/send-email", {
+      method: "POST",
+      body: data,
+    });
+
+    const responseData = await res.json();
+    if (!res.ok) {
+      throw new Error(responseData || "Email failed");
+    }
+
+    toast.success(`Courriel contenant la facture #${invoiceNumber} envoyé`);
+  }
 
   return (
     <div className="p-6 space-y-4">
@@ -112,10 +181,19 @@ Votre société`;
           />
 
           <div className="flex justify-end space-x-3 pt-4">
-            <Button variant="outline" type="button" onClick={onClose}>
+            <Button
+              variant="outline"
+              type="button"
+              onClick={onClose}
+              className="hover:cursor-pointer"
+            >
               Annuler
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="hover:cursor-pointer"
+            >
               {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

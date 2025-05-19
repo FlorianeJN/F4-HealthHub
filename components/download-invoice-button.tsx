@@ -2,10 +2,9 @@
 
 import { Shift } from "@/lib/definitions";
 import { generateInvoicePDF, PartnerInfo } from "@/lib/generateInvoicePDF";
-import React from "react";
 import { Button } from "./ui/button";
 
-interface EnterpriseInfo {
+export interface EnterpriseInfo {
   enterprise: {
     nom: string;
     telephone?: string;
@@ -22,7 +21,7 @@ interface EnterpriseInfo {
   } | null;
 }
 
-interface InvoiceAmounts {
+export interface InvoiceAmounts {
   montant_avant_taxes: string;
   tps: string;
   tvq: string;
@@ -38,17 +37,33 @@ export interface DownloadInvoiceButtonProps {
   amounts: InvoiceAmounts;
 }
 
-const DownloadInvoiceButton: React.FC<DownloadInvoiceButtonProps> = (props) => {
+export default function DownloadInvoiceButton({
+  invoiceNumber,
+  date,
+  enterpriseInfo,
+  partnerInfo,
+  shifts,
+  amounts,
+}: DownloadInvoiceButtonProps) {
+  const handleDownload = () => {
+    generateInvoicePDF({
+      invoiceNumber,
+      date,
+      enterpriseInfo,
+      partnerInfo,
+      shifts,
+      amounts,
+    });
+  };
+
   return (
     <Button
       size="lg"
       variant="outline"
       className="hover:cursor-pointer"
-      onClick={() => generateInvoicePDF(props)}
+      onClick={handleDownload}
     >
       Télécharger la facture (PDF)
     </Button>
   );
-};
-
-export default DownloadInvoiceButton;
+}
