@@ -1,5 +1,5 @@
 import { format, isValid, parseISO } from "date-fns";
-
+import { fr } from "date-fns/locale";
 import { Calendar as CalendarIcon } from "lucide-react";
 import * as React from "react";
 
@@ -15,9 +15,10 @@ import { cn } from "@/lib/utils";
 type DatePickerProps = {
   value?: string;
   onChange: (value: string) => void;
+  disabled?: boolean;
 };
 
-export function DatePicker({ value, onChange }: DatePickerProps) {
+export function DatePicker({ value, onChange, disabled }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
 
   // Parse the date and ensure it's valid
@@ -29,7 +30,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
 
   function handleOnSelect(date: Date | undefined) {
     if (date && isValid(date)) {
-      // Format back to a pure date string in UTC
+      // Format back to a pure date string
       const formattedDate = format(date, "yyyy-MM-dd");
       onChange(formattedDate);
       setOpen(false);
@@ -45,10 +46,11 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
             "w-[280px] justify-start text-left font-normal",
             !selectedDate && "text-muted-foreground"
           )}
+          disabled={disabled}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {selectedDate ? (
-            format(selectedDate, "PPP")
+            format(selectedDate, "PPP", { locale: fr })
           ) : (
             <span>Sélectionnez une date</span>
           )}
@@ -56,10 +58,9 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={handleOnSelect}
-          initialFocus
+          value={selectedDate}
+          onChange={handleOnSelect}
+          disabled={disabled}
         />
       </PopoverContent>
     </Popover>

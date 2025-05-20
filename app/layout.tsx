@@ -3,7 +3,6 @@ import { frFR } from "@clerk/localizations";
 import { ClerkProvider } from "@clerk/nextjs";
 import { type Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "react-day-picker/dist/style.css";
 import { ToastContainer } from "react-toastify";
 import "./globals.css";
 

@@ -51,12 +51,12 @@ const columns: ColumnDef<Invoice>[] = [
             status === "Payée"
               ? "bg-green-600 hover:bg-green-700"
               : status === "Envoyée"
-              ? "bg-indigo-600 hover:bg-indigo-700"
-              : status === "Prête"
-              ? "bg-blue-500 hover:bg-blue-600"
-              : status === "À compléter"
-              ? "bg-red-500 hover:bg-red-600"
-              : "bg-gray-500 hover:bg-gray-600"
+                ? "bg-indigo-600 hover:bg-indigo-700"
+                : status === "Prête"
+                  ? "bg-blue-500 hover:bg-blue-600"
+                  : status === "À compléter"
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-gray-500 hover:bg-gray-600"
           }
         >
           {status}
