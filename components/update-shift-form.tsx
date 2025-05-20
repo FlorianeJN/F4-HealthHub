@@ -32,10 +32,7 @@ type updateShiftFormProps = {
   onClose: () => void;
 };
 
-export default function UpdateShiftForm({
-  shiftId,
-  onClose,
-}: updateShiftFormProps) {
+export default function UpdateShiftForm({ onClose }: updateShiftFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -64,7 +61,6 @@ export default function UpdateShiftForm({
 
   const handleUpdate = (data: z.infer<typeof formSchema>) => {
     console.log(data);
-    console.log(shiftId);
     toast.success("Quart mis à jour avec succès!");
     onClose();
   };

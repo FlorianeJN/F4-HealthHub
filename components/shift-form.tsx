@@ -250,8 +250,6 @@ export default function ShiftForm(props: ShiftFormProps) {
     shiftId: number,
     data: z.infer<typeof formSchema>
   ) {
-    console.log(shiftId);
-
     await updateShift(shiftId, data, numFacture);
     toast.success("Quart mis à jour avec succès!");
     form.reset();
@@ -622,8 +620,8 @@ export default function ShiftForm(props: ShiftFormProps) {
                       ? "Ajout du quart ..."
                       : "Mise à jour du quart ..."
                     : mode === "add"
-                    ? "Ajouter le quart"
-                    : "Mettre à jour le quart"}
+                      ? "Ajouter le quart"
+                      : "Mettre à jour le quart"}
                 </Button>
               </div>
             </div>

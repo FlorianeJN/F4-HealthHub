@@ -82,17 +82,6 @@ export async function addPartner(formData: FormData) {
   const courriel = formData.get("courriel") as string;
 
   try {
-    console.log("Données du partenaire :", {
-      nom_partenaire,
-      no_civique,
-      rue,
-      ville,
-      province,
-      code_postal,
-      telephone,
-      courriel,
-    });
-
     await sql`INSERT INTO partenaire (nom, numero_civique, rue, ville, province, code_postal, telephone, courriel)
      VALUES (${nom_partenaire}, ${no_civique}, ${rue}, ${ville}, ${province}, ${code_postal}, ${telephone}, ${courriel})`;
     revalidatePath("/dashboard/partners");
@@ -294,10 +283,6 @@ export async function saveEnterpriseInfo(formData: FormData) {
         VALUES (${address_number}, ${address_street}, ${address_city}, ${address_province}, ${address_postal_code}, ${enterpriseId})
       `;
     }
-
-    console.log(
-      "Informations de l'entreprise et de l'adresse sauvegardées avec succès"
-    );
     revalidatePath("/dashboard/profile");
   } catch (e) {
     console.error("Erreur lors de la sauvegarde des informations:", e);
@@ -354,9 +339,6 @@ export async function updateShift(
       notes = ${notes}
     WHERE id = ${shiftId}
   `;
-
-    console.log("Mise à jour complétée");
-
     // Mettre à jour les chemins liés à la facture
     revalidatePath(`/dashboard/invoices`);
     revalidatePath(`/dashboard/invoices/${numFacture}`);

@@ -60,8 +60,6 @@ export function NewInvoiceForm({ onClose }: NewInvoiceFormProps) {
   });
 
   const onSubmit = async (data: FormValues) => {
-    console.log("Créer facture pour :", data);
-
     const newInvoiceNumber = await createNewInvoice(data);
     toast.success("Facture crée!");
     onClose();

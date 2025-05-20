@@ -48,7 +48,6 @@ export function InvoiceShiftsTable({ shifts }: InvoiceShiftsTableProps) {
     setShiftId(shiftId);
     setModalContent("update");
     setIsModalOpen(true);
-    console.log("updating shift #: " + shiftId);
   }
 
   async function handleConfirmDelete() {

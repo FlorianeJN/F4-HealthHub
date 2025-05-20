@@ -247,11 +247,8 @@ export async function fetchPartnerEmailFromInvoiceNumber(numFacture: string) {
     `;
 
     if (result.length === 0) {
-      console.log("Aucun courriel trouvé pour ce numéro de facture.");
       return null;
     }
-
-    console.log("Email du partenaire :", result[0].courriel);
     return result[0].courriel;
   } catch (error) {
     console.error("Erreur lors de la récupération du courriel :", error);
