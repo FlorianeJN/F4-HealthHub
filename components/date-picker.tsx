@@ -1,4 +1,4 @@
-import { format, parseISO } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import { fr } from "date-fns/locale"; // Pour format
 
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -21,13 +21,18 @@ type DatePickerProps = {
 export function DatePicker({ value, onChange }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
 
-  //Use parseISO so we don't accidentally shift dates by TZ offset
-  const selectedDate = value ? parseISO(value) : undefined;
+  // Parse the date and ensure it's valid
+  const selectedDate = React.useMemo(() => {
+    if (!value) return undefined;
+    const parsed = parseISO(value);
+    return isValid(parsed) ? parsed : undefined;
+  }, [value]);
 
   function handleOnSelect(date: Date | undefined) {
-    if (date) {
-      // Format back to a pure date string
-      onChange(format(date, "yyyy-MM-dd", { locale: fr }));
+    if (date && isValid(date)) {
+      // Format back to a pure date string in UTC
+      const formattedDate = format(date, "yyyy-MM-dd", { locale: fr });
+      onChange(formattedDate);
       setOpen(false);
     }
   }
@@ -50,12 +55,13 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
+      <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           locale={fr}
           mode="single"
           selected={selectedDate}
           onSelect={handleOnSelect}
+          initialFocus
         />
       </PopoverContent>
     </Popover>
