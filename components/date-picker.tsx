@@ -19,7 +19,7 @@ type DatePickerProps = {
 export function DatePicker({ value, onChange }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
 
-  // Use parseISO so we don't accidentally shift dates by TZ offset
+  //Use parseISO so we don't accidentally shift dates by TZ offset
   const selectedDate = value ? parseISO(value) : undefined;
 
   function handleOnSelect(date: Date | undefined) {

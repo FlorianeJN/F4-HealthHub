@@ -1,4 +1,6 @@
 /** @type {import('tailwindcss').Config} */
+
+import animate from "tailwindcss-animate";
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -36,6 +38,21 @@ module.exports = {
     "hover:text-primary-foreground",
     "focus:bg-primary",
     "focus:text-primary-foreground",
+
+    //default classnames
+    "rdp",
+    "rdp-day",
+    "rdp-day_selected",
+    "rdp-day_disabled",
+    "rdp-day_today",
+    "rdp-caption",
+    "rdp-head",
+    "rdp-cell",
+    "rdp-weeknumber",
+    "rdp-nav",
+    "rdp-table",
+    "rdp-row",
+    "rdp-tbody",
   ],
   theme: {
     container: {
@@ -109,5 +126,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [animate],
 };
