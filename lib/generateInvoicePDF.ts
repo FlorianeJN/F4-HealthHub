@@ -45,6 +45,28 @@ interface GenerateInvoicePDFParams {
   amounts: InvoiceAmounts;
 }
 
+function formatPDFDate(rawDate: string): string {
+  const iso =
+    typeof rawDate === "string" ? rawDate : new Date(rawDate).toISOString(); // ensure ISO format
+
+  const [year, month, day] = iso.slice(0, 10).split("-");
+  const months = [
+    "janvier",
+    "février",
+    "mars",
+    "avril",
+    "mai",
+    "juin",
+    "juillet",
+    "août",
+    "septembre",
+    "octobre",
+    "novembre",
+    "décembre",
+  ];
+  return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
+}
+
 export function generateInvoicePDF({
   invoiceNumber,
   enterpriseInfo,
@@ -54,28 +76,6 @@ export function generateInvoicePDF({
 }: GenerateInvoicePDFParams) {
   const doc = new jsPDF();
   doc.setFont("helvetica", "normal");
-
-  function formatPDFDate(rawDate: string): string {
-    const iso =
-      typeof rawDate === "string" ? rawDate : new Date(rawDate).toISOString(); // ensure ISO format
-
-    const [year, month, day] = iso.slice(0, 10).split("-");
-    const months = [
-      "janvier",
-      "février",
-      "mars",
-      "avril",
-      "mai",
-      "juin",
-      "juillet",
-      "août",
-      "septembre",
-      "octobre",
-      "novembre",
-      "décembre",
-    ];
-    return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
-  }
 
   // --- Logo ---
   const logoImg = document?.getElementById(
@@ -386,15 +386,9 @@ export function generateInvoicePDFBlob({
       doc.setFillColor(245, 245, 245);
       doc.rect(15, y - 6, 180, 8, "F");
     }
-    let dateStr = shift.date_quart;
-    if (typeof dateStr !== "string") {
-      try {
-        dateStr = new Date(dateStr).toLocaleDateString("fr-CA");
-      } catch {
-        dateStr = String(dateStr);
-      }
-    }
-    doc.text(dateStr || "", colX[0], y);
+    const dateStr = formatPDFDate(shift.date_quart);
+    doc.text(dateStr, colX[0], y);
+
     doc.text(shift.prestation || "", colX[1], y, {
       maxWidth: colX[2] - colX[1] - 2,
     });
