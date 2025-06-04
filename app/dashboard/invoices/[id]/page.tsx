@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import DownloadInvoiceButton from "@/components/download-invoice-button";
 import SendEmailAction from "@/components/email-modal";
 
