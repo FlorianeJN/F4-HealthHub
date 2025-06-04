@@ -1,7 +1,8 @@
-import MultipleBarChart from "@/components/MultipleBarChart";
+import PartnerRevenueChart from "@/components/PartnerRevenueChart";
 import PartnersDataTable from "@/components/partners-data-table";
 import PieChartLabel from "@/components/pie-chart-label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { fetchTotalAmounts } from "@/lib/data";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,7 +10,9 @@ export const metadata: Metadata = {
   description: "Gérez vos partenaires et leurs informations",
 };
 
-export default function Page() {
+export default async function Page() {
+  const totalAmounts = await fetchTotalAmounts();
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">
@@ -33,16 +36,7 @@ export default function Page() {
           </Card>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="bg-card shadow-sm">
-              <CardHeader className="border-b bg-muted/50">
-                <CardTitle className="text-lg">
-                  Répartition par province
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <MultipleBarChart />
-              </CardContent>
-            </Card>
+            <PartnerRevenueChart data={totalAmounts.byPartner} />
 
             <Card className="bg-card shadow-sm">
               <CardHeader className="border-b bg-muted/50">

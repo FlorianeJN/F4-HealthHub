@@ -11,6 +11,7 @@ import {
   isSameMonth,
   isToday,
   startOfMonth,
+  startOfWeek,
   subMonths,
 } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -28,8 +29,11 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
   ({ className, value, onChange, disabled, ...props }, ref) => {
     const [currentMonth, setCurrentMonth] = React.useState(value || new Date());
 
+    const firstDayOfGrid = startOfWeek(startOfMonth(currentMonth), {
+      locale: fr,
+    });
     const days = eachDayOfInterval({
-      start: startOfMonth(currentMonth),
+      start: firstDayOfGrid,
       end: endOfMonth(currentMonth),
     });
 
@@ -43,7 +47,9 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
 
     const handleDayClick = (day: Date) => {
       if (disabled) return;
-      onChange?.(day);
+      const safeDay = new Date(day);
+      safeDay.setHours(12, 0, 0, 0); // Prevent timezone shift issues
+      onChange?.(safeDay);
     };
 
     return (

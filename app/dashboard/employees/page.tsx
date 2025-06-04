@@ -33,25 +33,8 @@ export default function Page() {
           </Card>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="bg-card shadow-sm">
-              <CardHeader className="border-b bg-muted/50">
-                <CardTitle className="text-lg">
-                  Répartition par province
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <MultipleBarChart />
-              </CardContent>
-            </Card>
-
-            <Card className="bg-card shadow-sm">
-              <CardHeader className="border-b bg-muted/50">
-                <CardTitle className="text-lg">Types de partenaires</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <PieChartLabel />
-              </CardContent>
-            </Card>
+            <MultipleBarChart />
+            <PieChartLabel />
           </div>
         </div>
       </div>

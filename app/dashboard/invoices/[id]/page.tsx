@@ -34,7 +34,7 @@ export default async function InvoiceDetailPage({
   const shifts = await fetchInvoice(id);
   const invoiceNumber = id;
   const [, month, year] = invoiceNumber.split("-");
-  const date = new Date(parseInt(year), parseInt(month) - 1);
+  const date = new Date(parseInt(year), parseInt(month));
   const status = await fetchStatus(invoiceNumber);
   const enterpriseInfo = await fetchEnterpriseInfo();
   const amounts = await fetchInvoiceAmounts(invoiceNumber);

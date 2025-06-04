@@ -25,12 +25,14 @@ export function DatePicker({ value, onChange, disabled }: DatePickerProps) {
   const selectedDate = React.useMemo(() => {
     if (!value) return undefined;
     const parsed = parseISO(value);
+    console.log("Selected:" + parsed);
+
     return isValid(parsed) ? parsed : undefined;
   }, [value]);
 
   function handleOnSelect(date: Date | undefined) {
     if (date && isValid(date)) {
-      // Format back to a pure date string
+      // Remove time component by using only the date string
       const formattedDate = format(date, "yyyy-MM-dd");
       onChange(formattedDate);
       setOpen(false);

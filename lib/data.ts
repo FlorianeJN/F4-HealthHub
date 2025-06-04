@@ -146,7 +146,7 @@ export async function fetchTotalAmounts() {
 
     const byPartner = partnerResult.map((row) => ({
       partner: row.nom_partenaire,
-      total: formatter.format(row.total ?? 0),
+      total: row.total ?? 0,
     }));
 
     return {
@@ -405,5 +405,45 @@ export async function fetchPartnerByName(nom: string) {
   } catch (e) {
     console.error(e);
     throw new Error("Database Error Fetching Partner by Name");
+  }
+}
+
+//TODO : VERIFY
+export async function fetchEmployeeRevenue() {
+  try {
+    const data = await sql<{ nom: string; montant_total: number }[]>`
+      SELECT 
+        CONCAT(e.prenom, ' ', e.nom) as nom,
+        COALESCE(SUM(f.montant_apres_taxes), 0) as montant_total
+      FROM employe e
+      LEFT JOIN quart q ON q.emp_name = e.prenom
+      LEFT JOIN facture f ON f.num_facture = q.num_facture
+      WHERE f.montant_apres_taxes IS NOT NULL
+      GROUP BY e.id, e.prenom, e.nom
+      ORDER BY montant_total DESC
+    `;
+    return data;
+  } catch (e) {
+    console.error(e);
+    throw new Error("Database Error Fetching Employee Revenue");
+  }
+}
+
+//TODO : VERIFY
+export async function fetchEmployeeShifts() {
+  try {
+    const data = await sql<{ nom: string; count: number }[]>`
+      SELECT 
+        CONCAT(e.prenom, ' ', e.nom) as nom,
+        COUNT(q.id) as count
+      FROM employe e
+      LEFT JOIN quart q ON q.emp_name = e.prenom
+      GROUP BY e.id, e.prenom, e.nom
+      ORDER BY count DESC
+    `;
+    return data;
+  } catch (e) {
+    console.error(e);
+    throw new Error("Database Error Fetching Employee Shifts");
   }
 }

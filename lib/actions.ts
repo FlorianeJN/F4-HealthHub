@@ -64,7 +64,7 @@ export async function createNewInvoice({
   `;
 
   // 7) Revalidation de la route listant les factures
-  revalidatePath("/invoices");
+  revalidatePath("/dashboard/invoices");
 
   return newNumFacture;
 }
@@ -145,13 +145,12 @@ export async function addEmployee(formData: FormData) {
   const prenom = formData.get("prenom") as string;
   const telephone = formData.get("telephone") as string;
   const email = formData.get("email") as string;
-  const poste = formData.get("poste") as string;
   const statut = formData.get("statut") as string;
 
   try {
     await sql`
-      INSERT INTO employe (nom, prenom, telephone, email, poste, statut)
-      VALUES (${nom}, ${prenom}, ${telephone}, ${email}, ${poste}, ${statut})
+      INSERT INTO employe (nom, prenom, telephone, email,  statut)
+      VALUES (${nom}, ${prenom}, ${telephone}, ${email},  ${statut})
     `;
     revalidatePath("/dashboard/employees");
     return { success: true };
