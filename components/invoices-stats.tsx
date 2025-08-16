@@ -1,5 +1,5 @@
 import {
-  fetchInvoiceStats2025,
+  fetchInvoiceStats,
   fetchTotalAmounts,
   fetchTotalPendingAmounts,
   fetchTotalReceivedAmounts,
@@ -7,7 +7,7 @@ import {
 import Tuile from "./custom/tuile";
 
 export async function InvoicesStats() {
-  const { total, byPartner } = await fetchInvoiceStats2025();
+  const { total, byPartner } = await fetchInvoiceStats();
   const { total: totalReceived, byPartner: byPartnerReceived } =
     await fetchTotalReceivedAmounts();
   const { total: totalPending, byPartner: byPartnerPending } =

@@ -4,7 +4,7 @@ import postgres from "postgres";
 import { Employee, Invoice, Partner, Shift } from "./definitions";
 
 export const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
-const currentYear = 2025;
+const currentYear = new Date().getFullYear();
 
 const formatter = new Intl.NumberFormat("fr-CA", {
   style: "currency",
@@ -95,7 +95,7 @@ export async function fetchInvoice(num_facture: string) {
   }
 }
 
-export async function fetchInvoiceStats2025() {
+export async function fetchInvoiceStats() {
   try {
     // Total number of invoices in 2025
     const totalInvoices = await sql<{ count: string }[]>`
