@@ -98,19 +98,6 @@ export default function LandingPage() {
                     className="w-full h-auto"
                   />
                 </div>
-                <div className="absolute -bottom-4 -right-4 bg-white p-3 rounded-lg shadow-lg border border-slate-200 hidden sm:flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-full bg-[#637CF5]/10 flex items-center justify-center">
-                    <Check className="w-5 h-5 text-[#637CF5]" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-900">
-                      Satisfaction client
-                    </p>
-                    <p className="text-xs text-slate-500">
-                      100% des utilisateurs satisfaits
-                    </p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

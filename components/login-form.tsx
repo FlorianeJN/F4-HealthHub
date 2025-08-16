@@ -4,7 +4,7 @@ import { SignIn } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 
-export function LoginForm({
+export default function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {

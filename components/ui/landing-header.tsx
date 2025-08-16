@@ -5,7 +5,6 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import SignIn from "./sign-in";
-import SignUp from "./sign-up";
 
 export function LandingHeader() {
   const { isSignedIn } = useAuth();
@@ -33,10 +32,13 @@ export function LandingHeader() {
                 label="Connexion"
                 className="bg-white text-[#396CFF] border border-[#396CFF] hover:bg-[#396CFF]/10"
               />
-              <SignUp
+
+              {/* 
+        <SignUp
                 label="Inscription"
                 className="bg-[#396CFF] text-white hover:bg-[#2F5FE0]"
               />
+  */}
             </>
           )}
         </div>
@@ -77,10 +79,13 @@ export function LandingHeader() {
                 label="Connexion"
                 className="w-full bg-white text-[#396CFF] border border-[#396CFF] hover:cursor-pointer hover:bg-[#396CFF]/10"
               />
-              <SignUp
+
+              {/* 
+ <SignUp
                 label="Inscription"
                 className="w-full bg-[#396CFF] hover:bg-[#2F5FE0] hover:cursor-pointer text-white"
               />
+  */}
             </>
           )}
         </div>

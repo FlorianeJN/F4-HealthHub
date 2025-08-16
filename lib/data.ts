@@ -4,6 +4,7 @@ import postgres from "postgres";
 import { Employee, Invoice, Partner, Shift } from "./definitions";
 
 export const sql = postgres(process.env.POSTGRES_URL!, { ssl: "require" });
+const currentYear = 2025;
 
 const formatter = new Intl.NumberFormat("fr-CA", {
   style: "currency",
@@ -98,8 +99,9 @@ export async function fetchInvoiceStats2025() {
   try {
     // Total number of invoices in 2025
     const totalInvoices = await sql<{ count: string }[]>`
-      SELECT COUNT(*) FROM facture
-     
+      SELECT COUNT(*) 
+      FROM facture
+      WHERE EXTRACT(YEAR FROM date) = ${currentYear};
     `;
 
     // Number of invoices per partner in 2025
@@ -108,8 +110,8 @@ export async function fetchInvoiceStats2025() {
     >`
       SELECT nom_partenaire, COUNT(*) 
       FROM facture
-      
-      GROUP BY nom_partenaire
+      WHERE EXTRACT(YEAR FROM date) = ${currentYear}
+      GROUP BY nom_partenaire;
     `;
 
     return {
@@ -121,27 +123,29 @@ export async function fetchInvoiceStats2025() {
     };
   } catch (e) {
     console.error(e);
-    throw new Error("Database Error Fetching Invoice Stats");
+    throw new Error("Database Error Fetching Invoice Stats for 2025");
   }
 }
 
 export async function fetchTotalAmounts() {
   try {
-    // Montant total global
+    // Montant total global for 2025
     const totalResult = await sql<{ total: number | null }[]>`
       SELECT SUM(montant_apres_taxes) AS total
       FROM facture
+      WHERE EXTRACT(YEAR FROM date) = ${currentYear};
     `;
 
     const total = totalResult[0]?.total ?? 0;
 
-    // Montant total par partenaire
+    // Montant total par partenaire for 2025
     const partnerResult = await sql<
       { nom_partenaire: string; total: number | null }[]
     >`
       SELECT nom_partenaire, SUM(montant_apres_taxes) AS total
       FROM facture
-      GROUP BY nom_partenaire
+      WHERE EXTRACT(YEAR FROM date) = ${currentYear}
+      GROUP BY nom_partenaire;
     `;
 
     const byPartner = partnerResult.map((row) => ({
@@ -155,71 +159,29 @@ export async function fetchTotalAmounts() {
     };
   } catch (error) {
     console.error(error);
-    throw new Error("Error fetching total invoice amounts");
+    throw new Error("Error fetching total invoice amounts for 2025");
   }
 }
 
 export async function fetchTotalReceivedAmounts() {
   try {
-    // Montant total payé
-    const totalResult = await sql<{ total: number }[]>`
-      SELECT SUM(montant_apres_taxes) AS total
-      FROM facture
-      WHERE statut = 'Payée'
-    `;
-
-    const total = totalResult[0].total || 0;
-
-    // Montant payé par partenaire
-    const partnerResult = await sql<
-      { nom_partenaire: string; total: number }[]
-    >`
-      SELECT nom_partenaire, SUM(montant_apres_taxes) AS total
-      FROM facture
-      WHERE statut = 'Payée'
-      GROUP BY nom_partenaire
-    `;
-
-    const byPartner = partnerResult.map((row) => ({
-      partner: row.nom_partenaire,
-      total: formatter.format(row.total || 0),
-    }));
-
-    return {
-      total: formatter.format(total),
-      byPartner,
-    };
-  } catch (error) {
-    console.error(error);
-    throw new Error("Error fetching total received amounts");
-  }
-}
-
-export async function fetchTotalPendingAmounts() {
-  try {
-    const formatter = new Intl.NumberFormat("fr-CA", {
-      style: "currency",
-      currency: "CAD",
-      minimumFractionDigits: 2,
-    });
-
-    // Montant en attente
+    // Montant total payé for 2025
     const totalResult = await sql<{ total: number | null }[]>`
       SELECT SUM(montant_apres_taxes) AS total
       FROM facture
-      WHERE statut = 'Envoyée'
+      WHERE statut = 'Payée' AND EXTRACT(YEAR FROM date) = ${currentYear};
     `;
 
     const total = totalResult[0]?.total ?? 0;
 
-    // Montant en attente par partenaire
+    // Montant payé par partenaire for 2025
     const partnerResult = await sql<
       { nom_partenaire: string; total: number | null }[]
     >`
       SELECT nom_partenaire, SUM(montant_apres_taxes) AS total
       FROM facture
-      WHERE statut = 'Envoyée'
-      GROUP BY nom_partenaire
+      WHERE statut = 'Payée' AND EXTRACT(YEAR FROM date) = ${currentYear}
+      GROUP BY nom_partenaire;
     `;
 
     const byPartner = partnerResult.map((row) => ({
@@ -233,7 +195,43 @@ export async function fetchTotalPendingAmounts() {
     };
   } catch (error) {
     console.error(error);
-    throw new Error("Error fetching total pending amounts");
+    throw new Error("Error fetching total received amounts for 2025");
+  }
+}
+
+export async function fetchTotalPendingAmounts() {
+  try {
+    // Montant en attente for 2025
+    const totalResult = await sql<{ total: number | null }[]>`
+      SELECT SUM(montant_apres_taxes) AS total
+      FROM facture
+      WHERE statut = 'Envoyée' AND EXTRACT(YEAR FROM date) = ${currentYear};
+    `;
+
+    const total = totalResult[0]?.total ?? 0;
+
+    // Montant en attente par partenaire for 2025
+    const partnerResult = await sql<
+      { nom_partenaire: string; total: number | null }[]
+    >`
+      SELECT nom_partenaire, SUM(montant_apres_taxes) AS total
+      FROM facture
+      WHERE statut = 'Envoyée' AND EXTRACT(YEAR FROM date) = ${currentYear}
+      GROUP BY nom_partenaire;
+    `;
+
+    const byPartner = partnerResult.map((row) => ({
+      partner: row.nom_partenaire,
+      total: formatter.format(row.total ?? 0),
+    }));
+
+    return {
+      total: formatter.format(total),
+      byPartner,
+    };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error fetching total pending amounts for 2025");
   }
 }
 
